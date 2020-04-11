@@ -24,6 +24,7 @@ jobs:
             wrapping/basic,
             wrapping/time,
             linking/bind,
+            demo,
             shared/shlib,
             shared/dlopen,
             shared/shghdl,

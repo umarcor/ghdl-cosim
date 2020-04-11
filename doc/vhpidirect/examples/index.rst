@@ -13,5 +13,6 @@ Examples
    quickstart
    wrapping
    linking
+   demo
    shared
    other
