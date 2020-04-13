@@ -8,21 +8,19 @@ end;
 
 architecture arch of tb is
 
-  type bool_vec_t is array(natural range <>) of boolean;
-  type logic_vec_t is array(natural range <>) of std_logic;
-  type ulogic_mat_t is array(natural range <>, natural range <>) of std_ulogic;
+  type ulogic_mat_t is array(natural range <>) of std_ulogic_vector; --this requires vhdl08
 
 begin
   process
 
     procedure testCinterface(
-      v_1D_logic   : logic_vec_t;
+      v_1D_logic   : std_logic_vector;
       v_1D_ulogic   : ulogic_mat_t
     ) is
     begin assert false report "VHPIDIRECT testCinterface" severity failure; end;
     attribute foreign of testCinterface : procedure is "VHPIDIRECT testCinterface";
 
-    function getLogicVec return logic_vec_t is
+    function getLogicVec return std_logic_vector is
     begin assert false report "VHPIDIRECT getLogicVec" severity failure; end;
     attribute foreign of getLogicVec : function is "VHPIDIRECT getLogicVec";
 
@@ -35,7 +33,7 @@ begin
     begin assert false report "VHPIDIRECT freeCPointers" severity failure; end;
     attribute foreign of freeCPointers : procedure is "VHPIDIRECT freePointers";
 
-    constant g_logic_vec: logic_vec_t := getLogicVec;
+    constant g_logic_vec: std_logic_vector := getLogicVec;
     constant g_ulogic_mat: ulogic_mat_t := getULogicMat;
     
     constant logicArray: std_logic_vector(0 to 8) := ('U', 'X', '0', '1', 'Z', 'W', 'L', 'H', '-');
@@ -57,10 +55,10 @@ begin
 
     spareInt := 0;
     report "g_ulogic_mat'length: " & integer'image(g_ulogic_mat'length) severity note;
-    for i in g_ulogic_mat'range(1) loop
-      for j in g_ulogic_mat'range(2) loop
-        report "Asserting Mat [" & integer'image(i) & "," & integer'image(j) & "]: " & std_logic'image(g_ulogic_mat(i, j)) severity note;
-        assert g_ulogic_mat(i, j) = logicArray(spareInt) severity failure;
+    for i in g_ulogic_mat'range loop
+      for j in g_ulogic_mat'range(1) loop
+        report "Asserting Mat [" & integer'image(i) & "," & integer'image(j) & "]: " & std_logic'image(g_ulogic_mat(i)(j)) severity note;
+        assert g_ulogic_mat(i)(j) = logicArray(spareInt) severity failure;
         spareInt := spareInt + 1;
       end loop ;
     end loop ;
