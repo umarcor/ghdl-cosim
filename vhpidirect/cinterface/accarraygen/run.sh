@@ -5,7 +5,7 @@ set -e
 cd $(dirname "$0")
 
 echo "Analyze cAccess.vhd and tb.vhd"
-ghdl -a --std=08 -frelaxed cAccess.vhd tb.vhd
+ghdl -a --std=08 cAccess.vhd tb.vhd
 
 echo "Build tb (with cSharedVar.c) [GHDL]"
 ghdl -e -Wl,cSharedVar.c --std=08 tb
