@@ -5,17 +5,14 @@
 #include <assert.h>
 #include <string.h>
 
-#include <ghdl.h>
+#include <ghdl-intro.h>
 
-int32_t* vec;
+char* vec;
 bounds_t* vec_bounds;
-int32_t* mat;
+char* mat;
 bounds_t* mat_bounds;
-int32_t* d3_ptr;
-bounds_t* d3_bounds;
 int* len;
 int* len2;
-int* len3;
 
 int getFlatArrayIndex(int* dimIndex, int* lens, int dims){
   if(dims == 1){
@@ -71,73 +68,56 @@ void freePointers(){
   free(vec_bounds);
   free(mat);
   free(mat_bounds);
-  free(d3_ptr);
-  free(d3_bounds);
   free(len);
   free(len2);
-  free(len3);
 }
 
 void getLogicVec(ghdl_NaturalDimArr_t* ptr){
-  mat = malloc(2*3*sizeof(int32_t));
-  int32_t len[2] = {2, 3};
+  char vecArr[9];
+  int32_t len[1] = {9};
+  for(int i = 0; i < len[0]; i++){
+    vecArr[i] = i;
+  }
+  printf("\n");
+
+  *ptr = ghdlFromArray((void *)vecArr, len, 1, sizeof(char));
+  vec_bounds = ptr->bounds;
+  vec = ptr->array;
+  printf("1D Array Logic Values [%d]:\n", len[0]);
+  for(int x = 0; x < len[0]; x++){
+    printf("[%d] = %c\t", x, HDL_LOGIC_STATE[x]);
+    assert(((char*)ptr->array)[x] == vecArr[x]);
+    //ghdlFromArray creates a deep-copy of the information, so this change is not reflected in VHDL
+    vecArr[x] = 0;
+  }
+
+}
+
+void getULogicMat(ghdl_NaturalDimArr_t* ptr){
+  mat = malloc(3*3*sizeof(int32_t));
+  int32_t len[2] = {3, 3};
   int x, y, ind[2];
   for ( x=0 ; x<len[0] ; x++ ) {
     ind[0] = x;
     for ( y=0 ; y<len[1] ; y++ ) {
       ind[1] = y;
       int flatIndex = getFlatArrayIndex(ind, len, 2);
-      mat[flatIndex] = 11*(flatIndex+1);
+      mat[flatIndex] = flatIndex%9;
     }
   }
   //ghdl_NaturalDimArr_t* ptr = malloc(sizeof(ghdl_NaturalDimArr_t));
   *ptr = ghdlFromPointer((void *)mat, len, 2);
   mat_bounds = ptr->bounds;
+  assert(mat == ptr->array);
   printf("\n2D Array values [%d,%d]:\n", len[0], len[1]);
   for ( x=0 ; x<len[0] ; x++ ) {
     ind[0] = x;
     for ( y=0 ; y<len[1] ; y++ ) {
       ind[1] = y;
       int flatIndex = getFlatArrayIndex(ind, len, 2);
-      printf("mat[%d][%d] = %d\t", x, y, mat[flatIndex]);
+      printf("mat[%d][%d] = %c\t", x, y, HDL_LOGIC_STATE[mat[flatIndex]]);
+      assert(((char*)ptr->array)[flatIndex] == mat[flatIndex]);
     }
     printf("\n");
   }
-  //return ptr;
-}
-
-void getULogicMat(ghdl_NaturalDimArr_t* ptr){
-  int32_t d3[2][4][3];
-  int32_t len[3] = {2, 4, 3};
-  int x, y, z, ind[3];
-  for ( x=0 ; x<len[0] ; x++ ) {
-    ind[0] = x;
-    for ( y=0 ; y<len[1] ; y++ ) {
-      ind[1] = y;
-      for ( z=0 ; z<len[2] ; z++ ) {
-        ind[2] = z;
-        int flatIndex = getFlatArrayIndex(ind, len, 3);
-        d3[x][y][z] = 11*(flatIndex+1);
-      }
-    }
-  }
-  //ghdl_NaturalDimArr_t* ptr = malloc(sizeof(ghdl_NaturalDimArr_t));
-  *ptr = ghdlFromArray((void *)d3, len, 3, sizeof(int32_t));
-  d3_ptr = ptr->array;
-  d3_bounds = ptr->bounds;
-  printf("\n3D Array values [%d,%d,%d]:\n", len[0], len[1], len[2]);
-  for ( x=0 ; x<len[0] ; x++ ) {
-    ind[0] = x;
-    for ( y=0 ; y<len[1] ; y++ ) {
-      ind[1] = y;
-      for ( z=0 ; z<len[2] ; z++ ) {
-        ind[2] = z;
-        int flatIndex = getFlatArrayIndex(ind, len, 3);
-        printf("d3[%d][%d][%d] = %d\t", x, y, z, d3[x][y][z]);
-      }
-      printf("\n");
-    }
-    printf("\n");
-  }
-  //return ptr;
 }

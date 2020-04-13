@@ -38,6 +38,8 @@ begin
     constant g_logic_vec: logic_vec_t := getLogicVec;
     constant g_ulogic_mat: ulogic_mat_t := getULogicMat;
     
+    constant logicArray: std_logic_vector(0 to 8) := ('U', 'X', '0', '1', 'Z', 'W', 'L', 'H', '-');
+
     variable spareInt: integer;
   begin
 
@@ -46,32 +48,24 @@ begin
       v_1D_ulogic  =>  (('1', 'H', 'X'), ('1', 'H', 'X'))
     );
 
-    -- report "g_int_vec'length: " & integer'image(g_int_vec'length) severity note;
-    -- --report "g_int_vec'ascending: " & boolean'image(g_int_vec'ascending) severity note;
-    -- --report "g_int_vec'right: " & integer'image(g_int_vec'right) severity note;
-    -- --report "g_int_vec'left: " & integer'image(g_int_vec'left) severity note;
+    report "g_logic_vec'length: " & integer'image(g_logic_vec'length) severity note;
 
-    -- for x in g_int_vec'range loop
-    --   if(g_int_vec'ascending) then
-    --     spareInt := 11*(x + 1);
-    --   else
-    --     spareInt := 11*(g_int_vec'length - x);
-    --   end if;
-    --   report "Asserting Vec [" & integer'image(x) & "]: " & integer'image(g_int_vec(x)) severity note;
-    --   assert g_int_vec(x) = spareInt severity failure;
-    -- end loop;
+    for x in g_logic_vec'range loop
+      report "Asserting Vec [" & integer'image(x) & "]: " & std_logic'image(g_logic_vec(x)) severity note;
+      assert g_logic_vec(x) = logicArray(x) severity failure;
+    end loop;
 
-    -- spareInt := 0;
-    -- report "g_int_mat'length: " & integer'image(g_int_mat'length) severity note;
-    -- for i in g_int_mat'range(1) loop
-    --   for j in g_int_mat'range(2) loop
-    --     spareInt := spareInt + 1;
-    --     report "Asserting Mat [" & integer'image(i) & "," & integer'image(j) & "]: " & integer'image(g_int_mat(i, j)) severity note;
-    --     assert g_int_mat(i, j) = 11*spareInt severity failure;
-    --   end loop ;
-    -- end loop ;
+    spareInt := 0;
+    report "g_ulogic_mat'length: " & integer'image(g_ulogic_mat'length) severity note;
+    for i in g_ulogic_mat'range(1) loop
+      for j in g_ulogic_mat'range(2) loop
+        report "Asserting Mat [" & integer'image(i) & "," & integer'image(j) & "]: " & std_logic'image(g_ulogic_mat(i, j)) severity note;
+        assert g_ulogic_mat(i, j) = logicArray(spareInt) severity failure;
+        spareInt := spareInt + 1;
+      end loop ;
+    end loop ;
 
-    --freeCPointers;
+    freeCPointers;
     wait;
   end process;
 end;
