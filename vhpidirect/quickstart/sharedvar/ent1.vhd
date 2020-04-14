@@ -1,4 +1,4 @@
-use work.cAccess.all;
+use work.pkg.all;
 
 entity ent1 is
 end ent1;
