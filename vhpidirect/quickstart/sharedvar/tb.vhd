@@ -15,9 +15,7 @@ begin
 
   process
   begin
-    report "Testbench setting c_Var to -1." severity note;
-    c_Var.all := -1;        
-    c_printVar;
+    report "Testbench." severity note;
     wait;
   end process;
 
