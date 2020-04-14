@@ -13,9 +13,9 @@ package body pkg is
 	function c_Int_ptr return int_ptr is
 	begin
 		assert false report "c_Int_ptr VHPI" severity failure;
-	end c_Int_ptr;
+	end;
 	procedure c_printVar is
 	begin
 		assert false report "c_printVar VHPI" severity failure;
-	end c_printVar;
+	end;
 end package body pkg;
