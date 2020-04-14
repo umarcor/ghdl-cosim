@@ -21,6 +21,7 @@ jobs:
             quickstart/random,
             quickstart/math,
             quickstart/customc,
+            quickstart/logicvector,
             wrapping/basic,
             wrapping/time,
             linking/bind,

@@ -7,63 +7,33 @@ entity tb is
 end;
 
 architecture arch of tb is
-
-  type ulogic_mat_t is array(natural range <>) of std_ulogic_vector; --this requires vhdl08
-
 begin
   process
 
-    procedure testCinterface(
-      v_1D_logic   : std_logic_vector;
-      v_1D_ulogic   : ulogic_mat_t
-    ) is
-    begin assert false report "VHPIDIRECT testCinterface" severity failure; end;
-    attribute foreign of testCinterface : procedure is "VHPIDIRECT testCinterface";
+    function getLogicVecSize return integer is
+    begin assert false report "VHPIDIRECT getLogicVecSize" severity failure; end;
+    attribute foreign of getLogicVecSize : function is "VHPIDIRECT getLogicVecSize";
 
-    function getLogicVec return std_logic_vector is
+    constant g_logic_vec_size: integer := getLogicVecSize;
+    subtype logic_vec_t is std_logic_vector(0 to g_logic_vec_size-1);
+    type logic_vec_ptr_t is access logic_vec_t;
+
+    function getLogicVec return logic_vec_ptr_t is
     begin assert false report "VHPIDIRECT getLogicVec" severity failure; end;
     attribute foreign of getLogicVec : function is "VHPIDIRECT getLogicVec";
 
-    function getULogicMat return ulogic_mat_t is
-    begin assert false report "VHPIDIRECT getULogicMat" severity failure; end;
-    attribute foreign of getULogicMat : function is "VHPIDIRECT getULogicMat";
-
-
-    procedure freeCPointers is
-    begin assert false report "VHPIDIRECT freeCPointers" severity failure; end;
-    attribute foreign of freeCPointers : procedure is "VHPIDIRECT freePointers";
-
-    constant g_logic_vec: std_logic_vector := getLogicVec;
-    constant g_ulogic_mat: ulogic_mat_t := getULogicMat;
+    variable g_logic_vec: logic_vec_ptr_t := getLogicVec;
     
     constant logicArray: std_logic_vector(0 to 8) := ('U', 'X', '0', '1', 'Z', 'W', 'L', 'H', '-');
-
-    variable spareInt: integer;
   begin
-
-    testCinterface(
-      v_1D_logic   => ('1', 'H', 'X'),
-      v_1D_ulogic  =>  (('1', 'H', 'X'), ('1', 'H', 'X'))
-    );
 
     report "g_logic_vec'length: " & integer'image(g_logic_vec'length) severity note;
 
     for x in g_logic_vec'range loop
-      report "Asserting Vec [" & integer'image(x) & "]: " & std_logic'image(g_logic_vec(x)) severity note;
-      assert g_logic_vec(x) = logicArray(x) severity failure;
+      report "Asserting Vec [" & integer'image(x) & "]: " & std_logic'image(g_logic_vec.all(x)) severity note;
+      assert g_logic_vec.all(x) = logicArray(x) severity failure;
     end loop;
 
-    spareInt := 0;
-    report "g_ulogic_mat'length: " & integer'image(g_ulogic_mat'length) severity note;
-    for i in g_ulogic_mat'range loop
-      for j in g_ulogic_mat'range(1) loop
-        report "Asserting Mat [" & integer'image(i) & "," & integer'image(j) & "]: " & std_logic'image(g_ulogic_mat(i)(j)) severity note;
-        assert g_ulogic_mat(i)(j) = logicArray(spareInt) severity failure;
-        spareInt := spareInt + 1;
-      end loop ;
-    end loop ;
-
-    freeCPointers;
     wait;
   end process;
 end;
