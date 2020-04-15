@@ -1,7 +1,6 @@
 #include <stdio.h>
 #define SIZE_LOGIC_VEC_A (sizeof(logic_vec_A)/sizeof(char))
 #define SIZE_LOGIC_VEC_B (sizeof(logic_vec_B)/sizeof(char))
-#define SIZE_LOGIC_VEC_C 3
 
 static const char HDL_LOGIC_STATE[] = { 'U', 'X', '0', '1', 'Z', 'W', 'L', 'H', '-'};
 
@@ -19,7 +18,6 @@ HDL_D = 8,
 
 char logic_vec_A[3];
 char logic_vec_B[6];
-char logic_vec_C[3][3];
 
 int getLogicVecASize(){
   return SIZE_LOGIC_VEC_A;
@@ -27,10 +25,6 @@ int getLogicVecASize(){
 
 int getLogicVecBSize(){
   return SIZE_LOGIC_VEC_B;
-}
-
-int getLogicVecCSize(){
-  return SIZE_LOGIC_VEC_C;
 }
 
 char* getLogicVecA(){
@@ -56,18 +50,4 @@ char* getLogicVecB(){
   }
   printf("\n");
   return logic_vec_B;
-}
-
-
-char* getULogicMat(){
-  int x, y;
-  printf("\n2D Array values [%d,%d]:\n", SIZE_LOGIC_VEC_C, SIZE_LOGIC_VEC_C);
-  for ( x=0 ; x<SIZE_LOGIC_VEC_C ; x++ ) {
-    for ( y=0 ; y<SIZE_LOGIC_VEC_C ; y++ ) {
-      int indexId = x*SIZE_LOGIC_VEC_C + y;
-      logic_vec_C[x][y] = indexId;
-      printf("mat[%d][%d] = %c\t", x, y, HDL_LOGIC_STATE[indexId]);
-    }
-  }
-  return (char *)logic_vec_C;
 }
