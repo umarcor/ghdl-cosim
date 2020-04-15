@@ -1,6 +1,6 @@
 package pkg is
 	procedure c_printInt(val: integer);
-		attribute foreign of c_printInt : procedure is "VHPIDIRECT printInt";
+	attribute foreign of c_printInt : procedure is "VHPIDIRECT printInt";
 end package pkg;
 
 package body pkg is
