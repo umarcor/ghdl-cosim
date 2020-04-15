@@ -155,7 +155,7 @@ ghdl_NaturalDimArr_t ghdlFromPointer(void* vec, int* len, int dims) {//handled m
   {
     ghdlSetRange(b+i, len[i], false);
   }
-  
+
   void *a = vec;
   return (ghdl_NaturalDimArr_t){.array= a, .bounds=b};
 }
@@ -233,7 +233,7 @@ ghdl_AccNaturalDimArr_t* ghdlAccFromString(char *string) {
   return line;
 }
 
-/*  
+/*
 *   Handle C char for the appropriate values in std_ulogic and std_logic.
 */
 
