@@ -17,9 +17,6 @@ package cAccess is
 		procedure set(index: positive; val: integer);
 	end protected int_arr_ptr_pro;
 
-	procedure c_freeIntArray;
-	attribute foreign of c_freeIntArray : procedure is "VHPIDIRECT freeIntArray";
-
 	shared variable c_intArr : int_arr_ptr_pro;
 end package cAccess;
 
@@ -53,9 +50,4 @@ package body cAccess is
 	begin
 		assert false report "c_intArr_ptr VHPI" severity failure;
 	end c_intArr_ptr;
-
-	procedure c_freeIntArray is
-	begin
-		assert false report "c_freeIntArray VHPI" severity failure;
-	end c_freeIntArray;
 end package body cAccess;

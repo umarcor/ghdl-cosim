@@ -23,7 +23,6 @@ begin
 			c_intArr.set(i, -2*int);
 		end loop;
 		
-		c_freeIntArray;
 		wait;
 	end process;
 
