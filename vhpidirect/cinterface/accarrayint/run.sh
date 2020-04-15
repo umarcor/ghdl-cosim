@@ -4,11 +4,11 @@ set -e
 
 cd $(dirname "$0")
 
-echo "Analyze tb.vhd"
-ghdl -a cAccess.vhd tb.vhd
+echo "Analyze pkg.vhd tb.vhd"
+ghdl -a pkg.vhd tb.vhd
 
-echo "Build tb (with cSharedVar.c) [GHDL]"
-ghdl -e -Wl,cSharedVar.c tb
+echo "Build tb (with co-op.c) [GHDL]"
+ghdl -e -Wl,co-op.c tb
 
 echo "Execute tb"
 ./tb

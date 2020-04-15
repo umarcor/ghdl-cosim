@@ -1,8 +1,4 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-
-use work.cAccess.all;
+use work.pkg.all;
 
 entity tb is
 end entity tb;
@@ -20,7 +16,6 @@ begin
 			c_intArr.all(i) := -2*c_intArr.all(i);
 		end loop;
 		
-		c_freeIntArray;
 		wait;
 	end process;
 
