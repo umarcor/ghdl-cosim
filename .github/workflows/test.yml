@@ -27,6 +27,8 @@ jobs:
             shared/shlib,
             shared/dlopen,
             shared/shghdl,
+            cinterface/accarrayint,
+            cinterface/accarraygen,
           ]
     steps:
     - uses: actions/checkout@v1
