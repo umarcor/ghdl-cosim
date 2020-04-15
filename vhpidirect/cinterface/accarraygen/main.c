@@ -1,7 +1,10 @@
-#include "cSharedVar.h"
+#include <stdio.h>
+#include <malloc.h>
+
+int* intArray;
 int* getIntArr_ptr(){//function acts like a constructor so initialise the variable
-    intArray = malloc(sizeInt*sizeof(5));
-    for (int i = 0; i < sizeInt; i++)
+    intArray = malloc(5*sizeof(int));
+    for (int i = 0; i < 5; i++)
     {
         intArray[i] = 11*(i+1);
     }
@@ -9,7 +12,7 @@ int* getIntArr_ptr(){//function acts like a constructor so initialise the variab
 }
 
 void freeIntArray(){
-    for (int i = 0; i < sizeInt; i++)
+    for (int i = 0; i < 5; i++)
     {
         printf("intArray[%d] = %d\n", i, intArray[i]);
     }

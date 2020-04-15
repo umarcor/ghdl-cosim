@@ -15,10 +15,9 @@ begin
 		variable int : integer;
 	begin		
 		report "ArraySize Generic: " & integer'image(arraySize);
-		tbCaccess.showN;
-		report "Array length: " & integer'image(c_intArr.all'length);
+		shown;
 
-		for i in 0 to (c_intArr.getArray)'right loop
+		for i in 0 to arraySize-1 loop
 			int := c_intArr.get(i);
 			report "c_intArr[" & integer'image(i) &"] = " &  integer'image(int) & ". Set to: " & integer'image(-2*int);
 			c_intArr.set(i, -2*int);
