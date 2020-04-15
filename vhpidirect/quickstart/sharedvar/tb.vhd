@@ -1,5 +1,3 @@
---use work.pkg.all;
-
 entity tb is
 end tb;
 
