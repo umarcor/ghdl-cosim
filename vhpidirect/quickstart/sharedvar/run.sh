@@ -4,6 +4,7 @@ set -e
 
 cd $(dirname "$0")
 
+
 echo "VHDL 93: Analyze pkg_93.vhd ent_93.vhd tb.vhd"
 ghdl -a --std=93 pkg_93.vhd ent_93.vhd tb.vhd
 
