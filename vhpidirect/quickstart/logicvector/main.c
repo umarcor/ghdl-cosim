@@ -20,34 +20,34 @@ char logic_vec_A[3];
 char logic_vec_B[6];
 
 int getLogicVecASize(){
-  return SIZE_LOGIC_VEC_A;
+	return SIZE_LOGIC_VEC_A;
 }
 
 int getLogicVecBSize(){
-  return SIZE_LOGIC_VEC_B;
+	return SIZE_LOGIC_VEC_B;
 }
 
 char* getLogicVecA(){
-  //The HDL_LOGIC_CHAR enum is used
-  logic_vec_A[0] = HDL_U;
-  logic_vec_A[1] = HDL_X;
-  logic_vec_A[2] = HDL_0;
+	//The HDL_LOGIC_CHAR enum is used
+	logic_vec_A[0] = HDL_U;
+	logic_vec_A[1] = HDL_X;
+	logic_vec_A[2] = HDL_0;
 
-  printf("A: 1D Array Logic Values [%ld]:\n", SIZE_LOGIC_VEC_A);
-  for(int i = 0; i < SIZE_LOGIC_VEC_A; i++){
-    printf("[%d] = %c\t", i, HDL_LOGIC_STATE[logic_vec_A[i]]);
-  }
-  printf("\n");
-  return logic_vec_A;
+	printf("A: 1D Array Logic Values [%ld]:\n", SIZE_LOGIC_VEC_A);
+	for(int i = 0; i < SIZE_LOGIC_VEC_A; i++){
+		printf("[%d] = %c\t", i, HDL_LOGIC_STATE[logic_vec_A[i]]);
+	}
+	printf("\n");
+	return logic_vec_A;
 }
 
 char* getLogicVecB(){
-  //The equivalent value of HDL_LOGIC_CHAR is used
-  printf("B: 1D Array Logic Values [%ld]:\n", SIZE_LOGIC_VEC_B);
-  for(int i = 0; i < SIZE_LOGIC_VEC_B; i++){
-    logic_vec_B[i] = 8-i;//The last 'SIZE_LOGIC_VEC_B' HDL_LOGIC values, in reverse order.
-    printf("[%d] = %c\t", i, HDL_LOGIC_STATE[logic_vec_B[i]]);
-  }
-  printf("\n");
-  return logic_vec_B;
+	//The equivalent value of HDL_LOGIC_CHAR is used
+	printf("B: 1D Array Logic Values [%ld]:\n", SIZE_LOGIC_VEC_B);
+	for(int i = 0; i < SIZE_LOGIC_VEC_B; i++){
+		logic_vec_B[i] = 8-i;//The last 'SIZE_LOGIC_VEC_B' HDL_LOGIC values, in reverse order.
+		printf("[%d] = %c\t", i, HDL_LOGIC_STATE[logic_vec_B[i]]);
+	}
+	printf("\n");
+	return logic_vec_B;
 }

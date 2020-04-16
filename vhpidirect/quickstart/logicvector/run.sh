@@ -4,6 +4,7 @@ cd "$(dirname $0)"
 
 set -e
 
+
 echo "Analyze tb.vhd"
 ghdl -a tb.vhd
 
