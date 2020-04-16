@@ -15,7 +15,7 @@ package pkg is
 		impure function getRight return integer;
 		impure function get(index: integer) return integer;
 		procedure set(index: integer; val: integer);
-	end protected int_arr_ptr_pro;
+	end protected;
 
 	shared variable c_intArr : int_arr_ptr_pro;
 end package pkg;
@@ -25,29 +25,28 @@ package body pkg is
 	procedure showN is
 	begin
 		report "pkg Generic: " & integer'image(N);
-	end showN;
+	end;
 
 	type int_arr_ptr_pro is protected body
 		variable hidden_c_ptr : int_arr_ptr := c_intArr_ptr;
 		impure function getRight return integer is
 		begin
 			return hidden_c_ptr'right;
-		end function;
+		end;
 
 		impure function get(index: integer) return integer is
 		begin
 			return hidden_c_ptr(index);
-		end function get;
+		end;
 
 		procedure set(index: integer; val: integer) is
 		begin
 			hidden_c_ptr(index) := val;
-		end procedure set;
-	end protected body int_arr_ptr_pro;
-
+		end;
+	end protected body;
 	
 	impure function c_intArr_ptr return int_arr_ptr is
 	begin
 		assert false report "c_intArr_ptr VHPI" severity failure;
-	end c_intArr_ptr;
+	end;
 end package body pkg;
