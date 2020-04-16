@@ -5,13 +5,13 @@ entity tb is
 end entity tb;
 
 architecture RTL of tb is
-	package tbCaccess is new work.cAccess
+	package tbPkg is new work.pkg
 	generic map (
 		N => arraySize
 	);
 begin
 	process
-		use tbCaccess.all;
+		use tbPkg.all;
 		variable int : integer;
 	begin		
 		report "ArraySize Generic: " & integer'image(arraySize);
