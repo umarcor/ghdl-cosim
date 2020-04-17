@@ -63,7 +63,7 @@ These types can hold values other than high and low (``1`` and ``0``) and are en
 7. 'H' 
 8. '-' 
 
-Because number of enumeration values is less than 256, logic values are transported in 8 bit words (a ``char`` type in C) (as mentioned in :ref:`Restrictions_on_foreign_declarations`).
+Because the number of enumeration values is less than 256, logic values are transported in 8 bit words (a ``char`` type in C) (as mentioned in :ref:`Restrictions_on_foreign_declarations`).
 Logic vectors, of a bounded size, are easily created in C and passed to VHDL as ``char[]``. VHDL receives pointers as ``access`` types, in this case an access of a subtype of std_logic_vector.
 
 In this example two declarations make handling logic values in C a bit easier:
