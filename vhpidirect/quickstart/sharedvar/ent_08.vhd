@@ -12,7 +12,7 @@ begin
 		c_Var.set(1);
 		c_printVar;
 		wait;
-	end;
+	end process;
 end rtl_A ;
 
 architecture rtl_B of ent is
@@ -24,5 +24,5 @@ begin
 		c_Var.set(2);
 		c_printVar;
 		wait;
-	end;
+	end process;
 end rtl_B;

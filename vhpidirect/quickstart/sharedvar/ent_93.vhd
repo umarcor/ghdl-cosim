@@ -24,5 +24,5 @@ begin
 		c_Var.all := 2;
 		c_printVar;
 		wait;
-	end;
+	end process;
 end rtl_B;
