@@ -19,12 +19,11 @@ HDL_D = 8,
 char logic_vec_A[3];
 char logic_vec_B[6];
 
-int getLogicVecASize(){
-	return SIZE_LOGIC_VEC_A;
-}
-
-int getLogicVecBSize(){
-	return SIZE_LOGIC_VEC_B;
+int getLogicVecSize(int returnA){
+	if(returnA)
+		return SIZE_LOGIC_VEC_A;
+	else
+		return SIZE_LOGIC_VEC_B;
 }
 
 char* getLogicVecA(){

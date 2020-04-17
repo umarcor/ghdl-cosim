@@ -9,18 +9,14 @@ begin
 
 	process
 
-		function getLogicVecASize return integer is
-		begin assert false report "VHPIDIRECT getLogicVecASize" severity failure; end;
-		attribute foreign of getLogicVecASize : function is "VHPIDIRECT getLogicVecASize";
+		function getLogicVecSize(returnSizeOfA: boolean) return integer is
+		begin assert false report "VHPIDIRECT getLogicVecSize" severity failure; end;
+		attribute foreign of getLogicVecSize : function is "VHPIDIRECT getLogicVecSize";
 
-		function getLogicVecBSize return integer is
-		begin assert false report "VHPIDIRECT getLogicVecBSize" severity failure; end;
-		attribute foreign of getLogicVecBSize : function is "VHPIDIRECT getLogicVecBSize";
-
-		subtype logic_vec_a_t is std_logic_vector(0 to getLogicVecASize-1);
+		subtype logic_vec_a_t is std_logic_vector(0 to getLogicVecSize(true)-1);
 		type logic_vec_a_ptr_t is access logic_vec_a_t;
 
-		subtype logic_vec_b_t is std_ulogic_vector(0 to getLogicVecBSize-1);
+		subtype logic_vec_b_t is std_ulogic_vector(0 to getLogicVecSize(false)-1);
 		type logic_vec_b_ptr_t is access logic_vec_b_t;
 
 		function getLogicVecA return logic_vec_a_ptr_t is
@@ -43,6 +39,8 @@ begin
 			report "Asserting VecA [" & integer'image(x) & "]: " & std_logic'image(g_logic_vec_a(x)) severity note;
 			assert g_logic_vec_a(x) = logicArray(x) severity failure;
 		end loop;
+
+		report "g_logic_vec_b'length: " & integer'image(g_logic_vec_b'length) severity note;
 
 		for x in g_logic_vec_b'range loop
 			report "Asserting VecB [" & integer'image(x) & "]: " & std_logic'image(g_logic_vec_b(x)) severity note;
