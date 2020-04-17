@@ -42,3 +42,10 @@ When the required functionality is not available in pre-built libraries, custom 
 This example shows how to bind custom C functions in VHDL as either procedures or functions. Four cases are included: ``custom_procedure``, ``custom_procedure_withargs``, ``custom_function`` and ``custom_function_withargs``. In all cases, the parameters are defined as integers, in order to keep it simple. See :ref:`COSIM:VHPIDIRECT:Declarations` for further details.
 
 Since either C sources or pre-compiled ``.o`` objects can be added, in C/C++ projects of moderate complexity, it might be desirable to merge all the C sources in a single object before elaborating the design.
+
+:cosimtree:`package <vhpidirect/quickstart/package>`
+****************************************************
+
+If the auxillary VHPIDIRECT subprograms need to be accessed in more than one entity, it is possible to package the subprograms.
+
+In this example 2 different entities use a C defined ``c_printInt(val: integer)`` subprogram to print two different numbers. The subprogram attribute is declared as foreign in the ``pkg`` package and a dummy body for it is defined in the ``pkg`` package body. The dummy body contains an explicit assert that will highlight any failures to call the VHPIDIRECT C function.
