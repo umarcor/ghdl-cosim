@@ -46,6 +46,6 @@ Since either C sources or pre-compiled ``.o`` objects can be added, in C/C++ pro
 :cosimtree:`package <vhpidirect/quickstart/package>`
 ****************************************************
 
-If the auxillary VHPIDIRECT subprograms need to be accessed in more than one entity, it is possible to package the subprograms.
+If the auxillary VHPIDIRECT subprograms need to be accessed in more than one entity, it is possible to package the subprograms. This also makes it very easy to reuse the VHPIDIRECT declarations in different projects.
 
-In this example 2 different entities use a C defined ``c_printInt(val: integer)`` subprogram to print two different numbers. The subprogram attribute is declared as foreign in the ``pkg`` package and a dummy body for it is defined in the ``pkg`` package body. The dummy body contains an explicit assert that will highlight any failures to call the VHPIDIRECT C function.
+In this example 2 different entities use a C defined ``c_printInt(val: integer)`` subprogram to print two different numbers. Subprogram declaration requirements are detailed under the :ref:`COSIM:VHPIDIRECT:Declarations` section.
