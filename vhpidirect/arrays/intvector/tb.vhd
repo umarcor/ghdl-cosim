@@ -15,7 +15,6 @@ begin
 		type int_arr is array(0 to c_intArrSize-1) of integer;
 		type int_arr_ptr is access int_arr; -- represented C-side with int*
 
-
 		function c_intArr_ptr return int_arr_ptr is
 		begin
 			assert false report "c_intArr_ptr VHPI" severity failure;
