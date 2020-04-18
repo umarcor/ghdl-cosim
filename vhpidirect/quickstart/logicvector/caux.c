@@ -19,7 +19,7 @@ HDL_D = 8,
 char logic_vec_A[3];
 char logic_vec_B[6];
 
-int getLogicVecSize(int returnA){
+int getLogicVecSize(char returnA){
 	if(returnA)
 		return SIZE_LOGIC_VEC_A;
 	else

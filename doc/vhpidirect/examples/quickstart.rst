@@ -81,7 +81,7 @@ In this example two declarations make handling logic values in C a bit easier:
 This example builds on the matrices example (:ref:`COSIM:VHPIDIRECT:Examples:quickstart:matrices:`). Foreign subprograms are declared that enable receiving the size of two different logic vectors as well as the vectors themselves from C. There is only one subprogram to get the size of both C arrays, and it takes in an integer to determine which array's size gets returned. 
 
 .. HINT::
-  The ``getLogicVecSize`` in VHDL is declared as receiving a ``boolean`` argument. In C the function is declared to receive an ``integer`` argument. The VHDL booleans ``true`` and ``false`` have integer values, ``1`` and ``0`` respectively. So this mismatch causes no real issues.
+  The ``getLogicVecSize`` in VHDL is declared as receiving a ``boolean`` argument. In C the function is declared to receive an ``char`` argument. The VHDL booleans ``false`` and ``true`` are enumerations, and have integer values, ``0`` and ``1`` respectively. As with the logic values, the boolean enumerations use fewer than 8 bits, so the single byte in C's ``char`` variable receives the VHDL enumeration correctly.
 
 
 The two vectors are populated with logic values in different ways:
