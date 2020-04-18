@@ -14,4 +14,5 @@ Examples
    wrapping
    linking
    shared
+   arrays
    other

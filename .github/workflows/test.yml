@@ -18,17 +18,18 @@ jobs:
         max-parallel: 4
         matrix:
           task: [
-            quickstart/random,
-            quickstart/math,
-            quickstart/customc,
-            wrapping/basic,
-            wrapping/time,
-            linking/bind,
-            shared/shlib,
-            shared/dlopen,
-            shared/shghdl,
+            vhpidirect/quickstart/random,
+            vhpidirect/quickstart/math,
+            vhpidirect/quickstart/customc,
+            vhpidirect/arrays/intvectorgeneric,
+            vhpidirect/wrapping/basic,
+            vhpidirect/wrapping/time,
+            vhpidirect/linking/bind,
+            vhpidirect/shared/shlib,
+            vhpidirect/shared/dlopen,
+            vhpidirect/shared/shghdl,
           ]
     steps:
     - uses: actions/checkout@v1
     - run: docker pull $DOCKER_IMAGE
-    - run: docker run --rm -tv $(pwd):/src $DOCKER_IMAGE /src/vhpidirect/${{ matrix.task}}/run.sh
+    - run: docker run --rm -tv $(pwd):/src $DOCKER_IMAGE /src/${{ matrix.task}}/run.sh
