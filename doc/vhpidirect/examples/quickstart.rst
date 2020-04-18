@@ -25,6 +25,8 @@ This example shows how to import and use ``rand`` to generate and print 10 integ
       return 0;
     }
 
+.. _COSIM:VHPIDIRECT:Examples:quickstart:math:
+
 :cosimtree:`math <vhpidirect/quickstart/math>`
 **********************************************
 
@@ -42,3 +44,10 @@ When the required functionality is not available in pre-built libraries, custom 
 This example shows how to bind custom C functions in VHDL as either procedures or functions. Four cases are included: ``custom_procedure``, ``custom_procedure_withargs``, ``custom_function`` and ``custom_function_withargs``. In all cases, the parameters are defined as integers, in order to keep it simple. See :ref:`COSIM:VHPIDIRECT:Declarations` for further details.
 
 Since either C sources or pre-compiled ``.o`` objects can be added, in C/C++ projects of moderate complexity, it might be desirable to merge all the C sources in a single object before elaborating the design.
+
+:cosimtree:`package <vhpidirect/quickstart/package>`
+****************************************************
+
+If the auxillary VHPIDIRECT subprograms need to be accessed in more than one entity, it is possible to package the subprograms. This also makes it very easy to reuse the VHPIDIRECT declarations in different projects.
+
+In this example 2 different entities use a C defined ``c_printInt(val: integer)`` subprogram to print two different numbers. Subprogram declaration requirements are detailed under the :ref:`COSIM:VHPIDIRECT:Declarations` section.
