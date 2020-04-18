@@ -28,6 +28,7 @@ jobs:
             shared/dlopen,
             shared/shghdl,
             arrays/intvector,
+            arrays/intvector/maindefined,
           ]
     steps:
     - uses: actions/checkout@v1
