@@ -1,4 +1,5 @@
 #include <malloc.h>
+#include <stddef.h>
 
 int* intArray;
 int* getIntArr_ptr(int arraySize){//function acts like a constructor so initialise the variable
