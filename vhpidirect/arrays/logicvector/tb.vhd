@@ -31,6 +31,7 @@ begin
 		variable g_logic_vec_b: logic_vec_b_ptr_t := getLogicVecB;
 
 		constant logicArray: std_logic_vector(0 to 8) := ('U', 'X', '0', '1', 'Z', 'W', 'L', 'H', '-');
+		
 	begin
 
 		report "g_logic_vec_a'length: " & integer'image(g_logic_vec_a'length) severity note;
