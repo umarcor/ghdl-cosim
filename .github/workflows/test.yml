@@ -20,7 +20,6 @@ jobs:
             vhpidirect/quickstart/random,
             vhpidirect/quickstart/math,
             vhpidirect/quickstart/customc,
-            vhpidirect/quickstart/logicvector,
             vhpidirect/quickstart/package,
             vhpidirect/wrapping/basic,
             vhpidirect/wrapping/time,
@@ -28,6 +27,7 @@ jobs:
             vhpidirect/shared/shlib,
             vhpidirect/shared/dlopen,
             vhpidirect/shared/shghdl,
+            vhpidirect/arrays/logicvector,
           ]
     runs-on: ubuntu-latest
     env:
@@ -47,7 +47,6 @@ jobs:
             vhpidirect/quickstart/random,
             vhpidirect/quickstart/math,
             vhpidirect/quickstart/customc,
-            vhpidirect/quickstart/logicvector,
             vhpidirect/quickstart/package,
             vhpidirect/wrapping/basic,
             vhpidirect/wrapping/time,
@@ -55,6 +54,7 @@ jobs:
             vhpidirect/shared/shlib,
             #vhpidirect/shared/dlopen, ! dlfcn.h is not available on win
             #vhpidirect/shared/shghdl, ! dlfcn.h is not available on win
+            vhpidirect/arrays/logicvector,
           ]
     runs-on: windows-latest
     env:
