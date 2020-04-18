@@ -1,11 +1,16 @@
-#include <stdio.h>
-#define SIZE_ARRAY (sizeof(intArray)/sizeof(int))
+#include <malloc.h>
 
-int intArray[5];
-int* getIntArr_ptr(){//function acts like a constructor so initialise the variable
-    for (int i = 0; i < SIZE_ARRAY; i++)
-    {
-        intArray[i] = 11*(i+1);
+int* intArray;
+int* getIntArr_ptr(int arraySize){//function acts like a constructor so initialise the variable
+    if(intArray != NULL){
+        free(intArray);
+    }
+    if(arraySize > 0){
+        intArray = malloc(arraySize*sizeof(int));
+        for (int i = 0; i < arraySize; i++)
+        {
+            intArray[i] = 11*(i+1);
+        }
     }
     return intArray;
 }
