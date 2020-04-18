@@ -36,7 +36,7 @@ This example builds on the integer vector example (:ref:`COSIM:VHPIDIRECT:Exampl
   The ``getLogicVecSize`` in VHDL is declared as receiving a ``boolean`` argument. In C the function is declared to receive an ``char`` argument. The VHDL booleans ``false`` and ``true`` are enumerations, and have integer values, ``0`` and ``1`` respectively. As with the logic values, the boolean enumerations use fewer than 8 bits, so the single byte in C's ``char`` variable receives the VHDL enumeration correctly.
 
 
-The two vectors are populated with logic values in different ways:
+For illustrative purposes, the two vectors are populated with logic values in different ways:
 
 - LogicVectorA's indices are manually filled with enumeration values from HDL_LOGIC_STATES.
 
