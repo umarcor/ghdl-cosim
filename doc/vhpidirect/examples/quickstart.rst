@@ -157,3 +157,37 @@ data through an access/pointer. This approach is more verbose than others, but i
 2008 without modification and without requiring :option:`-frelaxed`. Moreover, it enhances encapsulation, as it provides
 a user-defined API between VHDL and C, which can improve maintainability when sources are reused. As a matter of fact,
 this approach is found in verification projects such as `VUnit <http://vunit.github.io/>`_ and `OSVVM <https://osvvm.org/>`_.
+
+:cosimtree:`Command-Line Arguments <vhpidirect/quickstart/cli>`
+***************************************************************
+
+Top-level generics
+==================
+
+As explained in :ref:`simulation_options`, there is no standard methos in VHDL to obtain arguments. However, GHDL allows to override top-level generics, with certain restrictions. See :option:`-gGENERIC` for further details.
+
+In this example, two top-level generics of types ``string`` and ``integer`` are set at runtime through CLI arguments.
+
+Parsing/customizing ``argv``
+============================
+
+By the same token, ``ghdl_main`` receives ``argc``, ``argv`` and ``env`` as any regular ``main`` function in C. Hence, when GHDL is wrapped as explained in :ref:`Starting_a_simulation_from_a_foreign_program`, it is possible to either pass raw arguments or to process them before calling ``ghdl_main``. Hence, overrides for top-level generics can be defined in C sources. Alternatively, the default value defined in VHDL can be set to a function call.
+
+This example showcases multiple approaches to manipulate top-level generics when GHDL is wrapped.
+
+- rawargs: pass argc and argv without modification. ``-gSIZE=5``
+- procargs: pass argc and argv by adding options. ``-s 5``, ``-s=5`` (atoi)
+- fcnargs: pass argc and argv without modification, but use a function call to set the default of top-level generics.
+- separgs: some more elaborate argv parsing to split based on ``[c options] -- [ghdl options]``. What to do when ``--`` is not found? Are all args for C or for ``ghdl_main``? ``--verbose -- -gSIZE 5``
+
+Setting parameters in C through VHDL generics
+=============================================
+
+VHDL can pass a generic to C when calling a subprogram. Although this might feel as a rare use case, it is easy for it to happen when adapting a design that is not aware of VHPIDIRECT features, and we want to optionally enhance it with them.
+
+JSON-for-VHDL
+=============
+
+`JSON-for-VHDL <https://github.com/Paebbels/JSON-for-VHDL>`_ is a synthesizable VHDL library that allows to provide configuration parameters through either a JSON file or an stringified (and optionally base16 encoded) top-level generic. Together with `jq <https://stedolan.github.io/jq/`_ or the libraries available for almost any language, it is a very powerful resource to pass large amounts of params with minimal maintenance effort.
+
+Examples are available at `Paebbels/JSON-for-VHDL:tests <https://github.com/Paebbels/JSON-for-VHDL/tree/master/tests>`_.
