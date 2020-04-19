@@ -22,6 +22,7 @@ jobs:
             vhpidirect/quickstart/customc,
             vhpidirect/quickstart/package,
             vhpidirect/arrays/intvectorgeneric,
+            vhpidirect/quickstart/sharedvar,
             vhpidirect/wrapping/basic,
             vhpidirect/wrapping/time,
             vhpidirect/linking/bind,
@@ -51,6 +52,7 @@ jobs:
             vhpidirect/quickstart/customc,
             vhpidirect/quickstart/package,
             vhpidirect/arrays/intvectorgeneric,
+            vhpidirect/quickstart/sharedvar,
             vhpidirect/wrapping/basic,
             vhpidirect/wrapping/time,
             #vhpidirect/linking/bind,  ! needs investigation, output of list-link seems to have wrong path format
