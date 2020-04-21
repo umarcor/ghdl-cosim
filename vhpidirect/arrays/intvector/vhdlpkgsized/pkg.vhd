@@ -8,8 +8,11 @@ package pkg is
 	type int_arr is array(0 to N-1) of integer;
 	type int_arr_ptr is access int_arr; -- represented C-side with int*
 	
-	impure function c_intArr_ptr return int_arr_ptr;
+	impure function c_intArr_ptr(size: integer) return int_arr_ptr;
 	attribute foreign of c_intArr_ptr : function is "VHPIDIRECT getIntArr_ptr";
+
+	procedure c_freeArr;
+	attribute foreign of c_freeArr : procedure is "VHPIDIRECT freeArr";
 
 	type int_arr_ptr_pro is protected
 		impure function getRight return integer;
@@ -28,25 +31,31 @@ package body pkg is
 	end;
 
 	type int_arr_ptr_pro is protected body
-		variable hidden_c_ptr : int_arr_ptr := c_intArr_ptr;
+		variable hidden_c_ptr : int_arr_ptr := c_intArr_ptr(N);
 		impure function getRight return integer is
 		begin
 			return hidden_c_ptr'right;
-		end;
+		end function;
 
 		impure function get(index: integer) return integer is
 		begin
 			return hidden_c_ptr(index);
-		end;
+		end function;
 
 		procedure set(index: integer; val: integer) is
 		begin
 			hidden_c_ptr(index) := val;
-		end;
+		end procedure;
 	end protected body;
 	
-	impure function c_intArr_ptr return int_arr_ptr is
+	impure function c_intArr_ptr(size: integer) return int_arr_ptr is
 	begin
 		assert false report "c_intArr_ptr VHPI" severity failure;
-	end;
+	end function;
+
+	procedure c_freeArr is
+	begin
+		assert false report "c_freeArr VHPI" severity failure;
+	end procedure;
+
 end package body pkg;
