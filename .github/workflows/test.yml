@@ -14,12 +14,14 @@ jobs:
   lin:
     strategy:
         fail-fast: false
-        max-parallel: 4
+        max-parallel: 3
         matrix:
           task: [
             vhpidirect/quickstart/random,
             vhpidirect/quickstart/math,
             vhpidirect/quickstart/customc,
+            vhpidirect/quickstart/package,
+            vhpidirect/quickstart/sharedvar,
             vhpidirect/wrapping/basic,
             vhpidirect/wrapping/time,
             vhpidirect/linking/bind,
@@ -27,6 +29,9 @@ jobs:
             vhpidirect/shared/dlopen,
             vhpidirect/shared/shghdl,
             vhpidirect/cinterface/accarraygen,
+            vhpidirect/arrays/intvector,
+            vhpidirect/arrays/logicvector,
+            vhpidirect/arrays/matrices,
           ]
     runs-on: ubuntu-latest
     env:
@@ -37,15 +42,34 @@ jobs:
     - run: docker pull $DOCKER_IMAGE
     - run: docker run --rm -tv $(pwd):/src -e CI $DOCKER_IMAGE /src/${{ matrix.task}}/run.sh
 
+  vunit:
+    strategy:
+        fail-fast: false
+        max-parallel: 3
+        matrix:
+          task: [
+            vhpidirect/arrays/matrices/vunit_axis_vcs,
+          ]
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      DOCKER_IMAGE: ghdl/vunit:llvm
+    steps:
+    - uses: actions/checkout@v2
+    - run: docker pull $DOCKER_IMAGE
+    - run: docker run --rm -tv $(pwd):/src -w /src/${{ matrix.task}} -e CI $DOCKER_IMAGE python3 run.py -v
+
   win:
     strategy:
         fail-fast: false
-        max-parallel: 4
+        max-parallel: 3
         matrix:
           task: [
             vhpidirect/quickstart/random,
             vhpidirect/quickstart/math,
             vhpidirect/quickstart/customc,
+            vhpidirect/quickstart/package,
+            vhpidirect/quickstart/sharedvar,
             vhpidirect/wrapping/basic,
             vhpidirect/wrapping/time,
             #vhpidirect/linking/bind,  ! needs investigation, output of list-link seems to have wrong path format
@@ -53,6 +77,9 @@ jobs:
             #vhpidirect/shared/dlopen, ! dlfcn.h is not available on win
             #vhpidirect/shared/shghdl, ! dlfcn.h is not available on win
             #vhpidirect/cinterface/accarraygen, !  fails with v0.37, should work with master (fixed under #1229)
+            vhpidirect/arrays/intvector,
+            vhpidirect/arrays/logicvector,
+            vhpidirect/arrays/matrices,
           ]
     runs-on: windows-latest
     env:
