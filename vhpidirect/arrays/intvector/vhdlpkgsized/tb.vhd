@@ -13,7 +13,7 @@ architecture RTL of tb is
 begin
 	process
 		variable int : integer;
-	begin		
+	begin
 		report "ArraySize Generic: " & integer'image(arraySize);
 		shown;
 
@@ -22,7 +22,7 @@ begin
 			report "c_intArr[" & integer'image(i) &"] = " &  integer'image(int) & ". Set to: " & integer'image(-2*int);
 			c_intArr.set(i, -2*int);
 		end loop;
-		
+
 		c_freeArr;
 		wait;
 	end process;

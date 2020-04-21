@@ -7,7 +7,7 @@ package pkg is
 
 	type int_arr is array(0 to N-1) of integer;
 	type int_arr_ptr is access int_arr; -- represented C-side with int*
-	
+
 	impure function c_intArr_ptr(size: integer) return int_arr_ptr;
 	attribute foreign of c_intArr_ptr : function is "VHPIDIRECT getIntArr_ptr";
 
@@ -47,7 +47,7 @@ package body pkg is
 			hidden_c_ptr(index) := val;
 		end procedure;
 	end protected body;
-	
+
 	impure function c_intArr_ptr(size: integer) return int_arr_ptr is
 	begin
 		assert false report "c_intArr_ptr VHPI" severity failure;

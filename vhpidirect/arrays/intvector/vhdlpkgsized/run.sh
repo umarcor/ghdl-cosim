@@ -15,4 +15,3 @@ echo "Execute tb (-gArraySize=3)"
 
 echo "Execute tb (-gArraySize=5)"
 ./tb -gArraySize=5
-
