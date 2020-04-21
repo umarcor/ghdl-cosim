@@ -9,9 +9,9 @@ architecture RTL of tb is
 	generic map (
 		N => arraySize
 	);
+	use tbPkg.all;
 begin
 	process
-		use tbPkg.all;
 		variable int : integer;
 	begin		
 		report "ArraySize Generic: " & integer'image(arraySize);
