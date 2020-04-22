@@ -28,7 +28,7 @@ jobs:
             vhpidirect/shared/shlib,
             vhpidirect/shared/dlopen,
             vhpidirect/shared/shghdl,
-            vhpidirect/arrays/invector/vhdlpkgsized,
+            vhpidirect/arrays/intvector/vhdlpkgsized,
             vhpidirect/arrays/intvector,
             vhpidirect/arrays/logicvector,
             vhpidirect/arrays/matrices,
@@ -76,7 +76,7 @@ jobs:
             vhpidirect/shared/shlib,
             #vhpidirect/shared/dlopen, ! dlfcn.h is not available on win
             #vhpidirect/shared/shghdl, ! dlfcn.h is not available on win
-            #vhpidirect/arrays/invector/vhdlpkgsized, !  fails with v0.37, should work with master (fixed under #1229)
+            #vhpidirect/arrays/intvector/vhdlpkgsized, !  fails with v0.37, should work with master (fixed under #1229)
             vhpidirect/arrays/intvector,
             vhpidirect/arrays/logicvector,
             vhpidirect/arrays/matrices,
