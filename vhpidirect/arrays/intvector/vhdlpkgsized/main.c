@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 	for (int i = 1; i < argc; i++)
 	{
 		if(strcmp(argv[i], growFlag) == 0){
-			vectorLength += 1;
+			vectorLength += 2;
 		}
 		else{
 			ghdl_argc += 1;
