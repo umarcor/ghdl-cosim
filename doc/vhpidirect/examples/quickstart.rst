@@ -160,14 +160,14 @@ this approach is found in verification projects such as `VUnit <http://vunit.git
 
 .. _COSIM:VHPIDIRECT:Examples:quickstart:shrecord:
 
-:cosimtree:`sharedvar <vhpidirect/quickstart/sharedvar/shrecord>`
+:cosimtree:`shrecord <vhpidirect/quickstart/sharedvar/shrecord>`
 -----------------------------------------------------------------
 
-Records are contiguous collections of types in VHDL, analogous to ``struct``s in C. This subexample quickly showcases:
+Records are contiguous collections of types in VHDL, analogous to ``struct`` in C. This subexample quickly showcases:
 
  - sharing a C declared struct between VHDL entities
  - sharing a VHDL declared record with C functions
 
 As mentioned in :ref:`Restrictions_on_foreign_declarations`, records are passed by reference. This means that the functions
 in C recieve and return ``struct *``. In VHDL, the VHPIDIRECT subprograms will return record access types, while those with
-record arguments do not have to be record access types.
+record arguments should not be record access types (as the record is pass by reference to the linked C function).
