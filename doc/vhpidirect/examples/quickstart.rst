@@ -157,3 +157,17 @@ data through an access/pointer. This approach is more verbose than others, but i
 2008 without modification and without requiring :option:`-frelaxed`. Moreover, it enhances encapsulation, as it provides
 a user-defined API between VHDL and C, which can improve maintainability when sources are reused. As a matter of fact,
 this approach is found in verification projects such as `VUnit <http://vunit.github.io/>`_ and `OSVVM <https://osvvm.org/>`_.
+
+.. _COSIM:VHPIDIRECT:Examples:quickstart:shrecord:
+
+:cosimtree:`sharedvar <vhpidirect/quickstart/sharedvar/shrecord>`
+-----------------------------------------------------------------
+
+Records are contiguous collections of types in VHDL, analogous to ``struct``s in C. This subexample quickly showcases:
+
+ - sharing a C declared struct between VHDL entities
+ - sharing a VHDL declared record with C functions
+
+As mentioned in :ref:`Restrictions_on_foreign_declarations`, records are passed by reference. This means that the functions
+in C recieve and return ``struct *``. In VHDL, the VHPIDIRECT subprograms will return record access types, while those with
+record arguments do not have to be record access types.
