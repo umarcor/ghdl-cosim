@@ -170,4 +170,9 @@ Records are contiguous collections of types in VHDL, analogous to ``struct`` in 
 
 As mentioned in :ref:`Restrictions_on_foreign_declarations`, records are passed by reference. This means that the functions
 in C recieve and return ``struct *``. In VHDL, the VHPIDIRECT subprograms will return record access types, while those with
-record arguments should not be record access types (as the record is pass by reference to the linked C function).
+record arguments should not be record access types (as the record is passed by reference to the linked C function).
+
+.. NOTE::
+  There is an asymmetry: records from VHDL passed to C are passed by reference, whereas structs from C passed to VHDL are passed
+  by value (so C must pass a ``struct*``, which is handed over by value). To further spell out the consequences: VHPIDIRECT subprograms
+  take records as their arguments but return record access types.
