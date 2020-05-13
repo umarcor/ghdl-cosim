@@ -35,7 +35,7 @@ begin
 		variable struc: c_struct := (
 			logic_bit => '-',
 			logic_vec => ('U', '1', 'U', '1', '-', '0', '-', '0'),
-			int				=> -123
+			int	=> -123
 		);
 		variable cStruct_acc: c_struct_ptr := c_getStruct;
 	begin

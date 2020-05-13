@@ -150,6 +150,11 @@ standard. Three different binaries are built from the same entity, using:
   Procedure ``setVar`` is not strictly required. It is used to allow the same descriptions of the entity/architectures
   to work with both VHDL 1993 and VHDL 2008. See the bodies of the procedure in :cosimtree:`pkg_93.vhd <vhpidirect/quickstart/sharedvar/pkg_93.vhd>` and :cosimtree:`pkg_08.vhd <vhpidirect/quickstart/sharedvar/pkg_08.vhd>`.
 
+.. _COSIM:VHPIDIRECT:Examples:quickstart:shint:
+
+:cosimtree:`shrecord <vhpidirect/quickstart/sharedvar/shint>`
+-------------------------------------------------------------
+
 As an alternative to using a shared variable in VHDL, subdir :cosimtree:`shint <vhpidirect/quickstart/sharedvar/shint>`
 contains an approach based on a helper record type which is used as a handle. Mimicking the concept of *methods* from
 Object Oriented (OO) programming, helper C functions are used to read/write the actual variables, instead of sharing
@@ -161,7 +166,7 @@ this approach is found in verification projects such as `VUnit <http://vunit.git
 .. _COSIM:VHPIDIRECT:Examples:quickstart:shrecord:
 
 :cosimtree:`shrecord <vhpidirect/quickstart/sharedvar/shrecord>`
------------------------------------------------------------------
+----------------------------------------------------------------
 
 Records are contiguous collections of types in VHDL, analogous to ``struct`` in C. This subexample quickly showcases:
 
