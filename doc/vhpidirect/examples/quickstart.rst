@@ -173,6 +173,13 @@ Records are contiguous collections of types in VHDL, analogous to ``struct`` in 
  - sharing a C declared struct between VHDL entities
  - sharing a VHDL declared record with C functions
 
+This example only uses 2 subprograms, and does not have a globally shared variable like the other 'sharedvar' examples. This
+is in order to keep the package compatible with both VHDL 93 and 08, and keep the focus on sharing a record variable.
+
+.. NOTE::
+  The records/structs have a field of type `std_logic_vector`/`char[]`, which is a variable that is more complicated than the
+  integer's in previous examples. The :ref:`COSIM:VHPIDIRECT:Examples:arrays:logicvectors` example fully explains this variable.
+
 As mentioned in :ref:`Restrictions_on_foreign_declarations`, records are passed by reference. This means that the functions
 in C recieve and return ``struct *``. In VHDL, the VHPIDIRECT subprograms will return record access types, while those with
 record arguments should not be record access types (as the record is passed by reference to the linked C function).
