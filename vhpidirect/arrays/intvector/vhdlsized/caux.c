@@ -12,6 +12,12 @@ void initIntArr(int* ptr, int arrSize) {
   }
 }
 
+int*  allocAndInitIntArr(int arrSize){
+  int* ptr = allocIntArr(arrSize);
+  initIntArr(ptr, arrSize);
+  return ptr;
+}
+
 void checkAndPrintIntArr(int* ptr, int arrSize) {
   for (int i = 0; i < arrSize; i++) {
     printf("%d: %d\n", i, ptr[i]);

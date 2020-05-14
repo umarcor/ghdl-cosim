@@ -29,6 +29,7 @@ jobs:
             vhpidirect/shared/dlopen,
             vhpidirect/shared/shghdl,
             vhpidirect/arrays/intvector,
+            vhpidirect/arrays/intvector/vhdlpkgsized,
             vhpidirect/arrays/logicvector,
             vhpidirect/arrays/matrices,
             vhpidirect/arrays/matrices/framebuffer,
@@ -75,9 +76,10 @@ jobs:
             vhpidirect/quickstart/package,
             vhpidirect/quickstart/sharedvar,
             vhpidirect/shared/shlib,
-            #vhpidirect/shared/dlopen,  ! dlfcn.h is not available on win
-            #vhpidirect/shared/shghdl,  ! dlfcn.h is not available on win
+            #vhpidirect/shared/dlopen, ! dlfcn.h is not available on win
+            #vhpidirect/shared/shghdl, ! dlfcn.h is not available on win
             vhpidirect/arrays/intvector,
+            #vhpidirect/arrays/intvector/vhdlpkgsized, !  fails with v0.37, should work with master (fixed under #1229)
             vhpidirect/arrays/logicvector,
             vhpidirect/arrays/matrices,
             #vhpidirect/arrays/matrices/framebuffer, ! needs ImageMagick's 'convert'
