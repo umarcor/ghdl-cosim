@@ -15,18 +15,12 @@ int main(int argc, char const *argv[])
 	const char* growFlag = "--grow-vec";
 	for (int i = 1; i < argc; i++)
 	{
-		if(strcmp(argv[i], growFlag) == 0){
-			vectorLength += 2;
-		}
-		else{
-			ghdl_argc += 1;
-			ghdl_argv[i] = malloc((strlen(argv[i])+1)*sizeof(char));
-			strcpy(ghdl_argv[i], argv[i]);
+		if(strcmp(argv[i], growFlag) == 0 && i < argc-1){
+			for(int j = 0; j < strlen(argv[i+1]); j++)
+				vectorLength = 10*vectorLength + (argv[i+1][j] - '0');
 		}
 	}
-	
-
-	vectorLength = (vectorLength > 999 ? 999 : vectorLength);
+	vectorLength = (vectorLength > 333 ? 999 : 3*vectorLength);
 
 	ghdl_argc += 1;
 	ghdl_argv[ghdl_argc-1] = malloc(15*sizeof(char));
