@@ -77,6 +77,32 @@ Note that VHPIDIRECT resources are defined in a package (as shown in :ref:`COSIM
 The same package and the corresponding C source file (``caux.c``) are used in both examples, even though ``vhdlalloc`` does
 not need neither ``[c_]allocIntArr`` nor ``[c_]freePointer``.
 
+.. _COSIM:VHPIDIRECT:Examples:arrays:intvector:vhdlpkgsized:
+
+:cosimtree:`Sized in VHDL Package <vhpidirect/arrays/intvector/vhdlpkgsized>`
+=============================================================================
+
+Instead of defining the integer array type to have a set size in VHDL, the package that contains the type declaration can use
+a generic. Generic packages are a feature of VHDL 08. The complication of shared variables having to be a ``protected type`` is
+the cost of using VHDL 08, discussed in :ref:`COSIM:VHPIDIRECT:Examples:quickstart:sharedvar`. The ``protected type`` has member 
+subprograms that enable getting and setting indices of the integer array. 
+
+This example allocates the integer array within C, mimicing that half of the :ref`COSIM:VHPIDIRECT:Examples:arrays:intvector:vhdlsized`
+example by using its ``caux.c`` file.
+
+The top-level entity has to instantiate the generic package by providing a value for its generics. Instead of simply using a 
+hardcoded value for the package generic that determines the integer array size, the top-level entity passes its own generic.
+
+The top-level entity's generic is an interface generic, which can be set using GHDL's runtime flag :option:`-g`. The first few
+executions of the example set the integer array's size in this way. 
+
+Building on the idea of a custom entrypoint (``int main(char argc, char *argv[])``), introduced in the 
+:ref:`COSIM:VHPIDIRECT:Examples:arrays:intvector:csized` example, this example also defines the integer array size via a custom
+entrypoint. 
+
+All that the custom entrypoint in ``main.c`` does is handle the custom execution option ``--grow-vector N``, and create the
+the appropriate GHDL arguments. It is quite a large file for such a simple task.
+
 .. _COSIM:VHPIDIRECT:Examples:arrays:logicvectors:
 
 :cosimtree:`Vector of std_logic <vhpidirect/arrays/logicvector>`

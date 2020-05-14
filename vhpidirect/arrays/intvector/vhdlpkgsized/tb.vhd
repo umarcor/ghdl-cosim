@@ -24,7 +24,7 @@ begin
 			report "c_intArr[" & integer'image(i) &"] = " &  integer'image(int) & ". Set to: " & integer'image(c_intArr.get(i));
 		end loop;
 
-		c_freeArr;
+		c_intArr.free;
 		wait;
 	end process;
 
