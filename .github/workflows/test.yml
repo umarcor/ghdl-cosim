@@ -24,11 +24,13 @@ jobs:
             vhpidirect/quickstart/wrapping/time,
             vhpidirect/quickstart/linking/bind,
             vhpidirect/quickstart/package,
+            vhpidirect/arrays/intvectorgeneric,
             vhpidirect/quickstart/sharedvar,
             vhpidirect/shared/shlib,
             vhpidirect/shared/dlopen,
             vhpidirect/shared/shghdl,
             vhpidirect/arrays/intvector,
+            vhpidirect/arrays/intvector/maindefined,
             vhpidirect/arrays/logicvector,
             vhpidirect/arrays/matrices,
             vhpidirect/arrays/matrices/framebuffer,
@@ -73,11 +75,13 @@ jobs:
             vhpidirect/quickstart/wrapping/time,
             #vhpidirect/quickstart/linking/bind,  ! needs investigation, output of list-link seems to have wrong path format
             vhpidirect/quickstart/package,
+            vhpidirect/arrays/intvectorgeneric,
             vhpidirect/quickstart/sharedvar,
             vhpidirect/shared/shlib,
-            #vhpidirect/shared/dlopen,  ! dlfcn.h is not available on win
-            #vhpidirect/shared/shghdl,  ! dlfcn.h is not available on win
+            #vhpidirect/shared/dlopen, ! dlfcn.h is not available on win
+            #vhpidirect/shared/shghdl, ! dlfcn.h is not available on win
             vhpidirect/arrays/intvector,
+            vhpidirect/arrays/intvector/maindefined,
             vhpidirect/arrays/logicvector,
             vhpidirect/arrays/matrices,
             #vhpidirect/arrays/matrices/framebuffer, ! needs ImageMagick's 'convert'
