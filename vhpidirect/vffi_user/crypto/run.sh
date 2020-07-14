@@ -4,6 +4,18 @@ cd "$(dirname $0)"
 
 set -e
 
+echo "> Analyze vhdl/tb.vhd"
+ghdl -a --std=08 vhdl/tb.vhd
+
+echo "> Build tb_vhdl (with encrypt.c)"
+ghdl -e --std=08 -Wl,encrypt.c -o tb_vhdl -Wl,-lcrypto -Wl,-lssl tb
+
+echo "> Execute tb_vhdl"
+set +e
+./tb_vhdl
+set -e
+
+
 echo "> Analyze vffi_pkg"
 ghdl -a --std=08 --work=ghdl ../../vffi_user.vhd ../../vffi_user-body.vhd
 
