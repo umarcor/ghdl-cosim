@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 from utils import dlopen, dlclose, enc_args, FUNCTYPE
 
-
+@FUNCTYPE(None, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.c_int)
 def plotxy(x, y, l):
     print("plotxy", x, y, l)
 
@@ -22,18 +22,26 @@ def plotxy(x, y, l):
     if 'CI' not in environ:
         plt.show()
 
-
-C_PLOTXY = FUNCTYPE(None, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int), ctypes.c_int)(plotxy)
-
 C_ARGS = enc_args([str(Path(__file__))])
 
 CAUXDLL = dlopen("./caux.so")
 
-print("> c_main")
-print(CAUXDLL.c_main(len(C_ARGS), C_ARGS))
-
-dlclose(CAUXDLL)
-CAUXDLL = dlopen("./caux.so")
+#print("> c_main")
+#CAUXDLL.plot = C_PLOTXY
+#print(CAUXDLL.c_main(len(C_ARGS), C_ARGS))
+#
+#dlclose(CAUXDLL)
+#CAUXDLL = dlopen("./caux.so")
 
 print("> pymain")
-print(CAUXDLL.py_main(len(C_ARGS), C_ARGS, C_PLOTXY))
+p = CAUXDLL.plot
+print(p.restype)
+print(p.argtypes)
+print(p.errcheck)
+print(p.errcheck)
+print("~~~~")
+print(CAUXDLL.plot)
+print(plotxy)
+CAUXDLL.plot.callable = plotxy
+print(CAUXDLL.plot)
+print(CAUXDLL.ghdl_main(len(C_ARGS), C_ARGS))

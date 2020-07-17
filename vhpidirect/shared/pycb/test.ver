@@ -1,7 +1,8 @@
 VHPIDIRECT {
   global:
+ghdl_main;
+plot;
 c_main;
-py_main;
   local:
         *;
 };

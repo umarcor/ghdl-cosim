@@ -17,6 +17,7 @@ def dlopen(path):
     try:
         return ctypes.CDLL(path)
     except OSError:
+        print(OSError.stderror)
         print(
             "Loading executables dynamically seems not to be supported on this platform"
         )
