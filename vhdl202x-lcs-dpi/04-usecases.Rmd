@@ -1,0 +1,53 @@
+# Use cases
+
+Although non standardized, GHDL has provided a FFI interface for more than a decade already. As a result, dozens of working examples exist, which showcase most of the features in this proposal. The following is a non-exhaustive list of different use cases:
+
+## Executing arbitrary Python callbacks from VHDL
+
+By using `ctypes`, Python can be effectively seen as C from VHDL's/GHDL's perspective. I.e., it is possible to execute any function in any existing Python library as any other VHDL procedure/function (with contraints related to types). See, for example, [pycb](https://ghdl.github.io/ghdl-cosim/vhpidirect/examples/shared.html#pycb), where `matplotlib.pyplot` is used to draw an `x,y` graph of constrained one-dimensional arrays of integers from VHDL.
+
+Using GHDL, it is currently not possible to "defer" the definition as proposed in [Deferred definition of external subprograms](#deferreddef). At the same time, Python's ctypes does currently not support setting/overwriting a function pointer in a shared library. A helper C function needs to be used. Find a discussion about these limitations in [ghdl/ghdl#1398](https://github.com/ghdl/ghdl/issues/1398).
+
+## Raw simulation of hardware-software interactions on SoCs
+
+The main purpose being to avoid the complexity of interconnects (i.e. delaying those implementation details to later in the design process). Verification Components, such as VUnit's (I'd expect OSVVM's [@osvvm] to work too) are off-the-shelf models that allow to interact with UUT's including *complex* bus interfaces following a software approach (testbench). That is, behavioural models for the interconnects are already available. Vivado HLS projects exported to VHDL have been succesfully co-simulated with GHDL + VUnit only.
+
+## Coarse grained mixed-language simulation
+
+At FOSDEM 2016, Tristan Gingold provided a demo about how to co-simulate VHDL and SystemC. Sources are available at [ghdl/ghdl-cosim/tree/master/systemc](https://github.com/ghdl/ghdl-cosim/tree/master/systemc).
+
+[Verilator](https://github.com/verilator/verilator) [@verilator] is tool that allows generating cycle-accurate behavioural C++ models from synthesizable Verilog sources. In [ghdl/ghdl#1335](https://github.com/ghdl/ghdl/issues/1335), Benjamin Herrenschmidt reported combining microwatt (VHDL) with Litedram (Verilog) by using Verilator and GHDL's VHPIDIRECT.
+
+## Coarse grained mixed-signal simulation
+
+[Xyce](https://xyce.sandia.gov/) ([github.com/Xyce/Xyce](https://github.com/Xyce/Xyce)) is an SPICE-compatible high-performance analog circuit simulator developer in Sandia National Laboratories (SNL), which uses solvers from Trilinos. [Trilinos](https://trilinos.github.io/) ([github.com/trilinos/Trilinos](https://github.com/trilinos/Trilinos)), is a library focused on linear algebra techniques. In the end of 2018, several application notes regarding co-simulation were published at [Xyce: Documentation & Tutorials](https://xyce.sandia.gov/documentation/index.html):
+
+- Coupled Simulation with the Xyce General External Interface [@xyce-gei]
+- Mixed Signal Simulation with Xyce^[Note that later versions of the document exist. For example, [June 2019](https://xyce.sandia.gov/downloads/_assets/documents/AppNote-MixedSignal_6.11.pdf) and [June 2020](https://xyce.sandia.gov/downloads/_assets/documents/AppNote-MixedSignal.pdf)] [@xyce-mixed]
+- Digital/Analog Cosimulation using CocoTB and Xyce [@xyce-cocotb]
+
+In December 2019, U. Martinez-Corral rewrote the Xyce examples using GHDL's VHPIDIRECT, instead of cocotb and VPI. See [ghdl/ghdl#1052](https://github.com/ghdl/ghdl/issues/1052). In the context of this proposal, in September 2020 the examples were modified for using `vffi_user.h` (see [umarcor/ghdl-cosim: vhpidirect/vffi_user/xyce](https://umarcor.github.io/ghdl-cosim/vhpidirect/examples/vffi_user.html#xyce)):
+
+- `runACircuit` shows how to get a null terminated C string from the fat pointer of an unconstrained string.
+- `runACircuitInSteps` shows how to pass and use unconstrained `real_vector`.
+- `runWithDACs` shows how to pass and use unconstrained multidimensional arrays of `real`.
+
+## Using pipes or RPC libs to implement *virtual* peripherals
+
+FIFOs (queues), RAMs, screens, motors.... See [hackfin/ghdlex](https://github.com/hackfin/ghdlex), [dbhi/gRPC](https://github.com/dbhi/gRPC) and [dbhi/vboard](https://github.com/dbhi/vboard).
+
+This also enables spliting large simulations in multiple low-cost devices which include the same ARM cores as other high-end SoC boards. Since GHDL works on ARM, hardware-software co-simulations can be executed *natively* (i.e. without using QEMU to emulate the software). See [dbhi.github.io/pdf/FPGA2020_poster.pdf](https://dbhi.github.io/pdf/FPGA2020_poster.pdf).
+
+## Implementing algebra algorithms in VHDL
+
+Passing matrices to/from Octave/Matlab/Scilab as pointers (by reference). This allows using VHDL 2008's `fixed_point` and `floating_point` packages as an alternative to "Fixed-point modeling" toolboxes. See [Array and AXI4 Stream Verification Components](https://ghdl.github.io/ghdl-cosim/vhpidirect/examples/arrays.html#array-and-axi4-stream-verification-components), [dbhi/fpconv](https://github.com/dbhi/fpconv) and [umarcor/MSEA/tree/master/octave](https://github.com/umarcor/MSEA/tree/master/octave).
+
+From an opposite point of view, Octave/Matlab/Scilab can be used to implement models of *plants* in control applications, while designing all the system in VHDL. This is an alternative to Xilinx's integration with Simulink, where the system is designed in Simulink and VHDL source can be included as black boxes.
+
+## Replacing functions in unmodified binaries, with behaviourally equivalent VHDL simulations/designs/models
+
+This allows to evaluate hardware accelerator designs without modifying the software to be accelerated. See [dbhi.github.io](https://dbhi.github.io/).
+
+## Providing custom(izable) GUI interfaces to interact with simulations at runtime
+
+For example, in [VUnit/vunit#568](https://github.com/VUnit/vunit/pull/568) a Flask (Python) web server and a Vue (JavaScript) web frontend are used to visualize the arrays/buffers from the VHDL design. The last example is specially illustrative because it shows multiple internal buffers in an image processing pipeline.
