@@ -1,0 +1,10 @@
+# Existing C headers
+
+In this proposal, `vhpi_user.h` from [opensource.ieee.org/vasg/Packages](https://opensource.ieee.org/vasg/Packages/-/blob/release/code/vhpi_user.h) is used. However, inspecting other open source projects reveals that different versions of headers for VHPI and VPI are used.
+
+- Verialtor: [verilator/verilator@master: include/vltstd](https://github.com/verilator/verilator/tree/master/include/vltstd)
+- cocotb: [cocotb/cocotb@master: cocotb/share/include](https://github.com/cocotb/cocotb/tree/master/cocotb/share/include)
+- GHDL:
+  - [ghdl/ghdl@master: src/grt/vpi_user.h](https://github.com/ghdl/ghdl/blob/master/src/grt/vpi_user.h)
+  - [ghdl/ghdl@master: src/grt/vpi_thunk.h](https://github.com/ghdl/ghdl/blob/master/src/grt/vpi_thunk.h)
+  - [ghdl/ghdl@master: src/grt/vpi_thunk.c](https://github.com/ghdl/ghdl/blob/master/src/grt/vpi_thunk.c)

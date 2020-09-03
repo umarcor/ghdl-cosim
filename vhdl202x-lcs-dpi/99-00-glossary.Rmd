@@ -1,0 +1,85 @@
+# Glossary and acronyms {-#glossary}
+
+- **API**: Application Programming Interface (see [Wikipedia: Application programming interface](https://en.wikipedia.org/wiki/Application_programming_interface)).
+
+- **ABI**: Application Binary Interface (see [Wikipedia: Application binary interface](https://en.wikipedia.org/wiki/Application_binary_interface)).
+
+- **BFM**: Bus Functional Model.
+
+- **cocotb**: a coroutine based cosimulation library for writing VHDL and Verilog testbenches in Python [@cocotb].
+
+- **DPI**: Direct Programming Interface. SystemVerilog DPI is an interface which can be used to interface SystemVerilog with foreign languages (see [Wikipedia: SystemVerilog DPI](https://en.wikipedia.org/wiki/SystemVerilog_DPI)).
+
+- **DUT**: Design Under Test.
+
+- **FFI**: Foreign Function Interface, a mechanism by which a program written in one programming language can call routines or make use of services written in another (see [Wikipedia: Foreign function interface](https://en.wikipedia.org/wiki/Foreign_function_interface)).
+
+- **FIFO**: First In First Out, a method for organising the manipulation of a data structure where the oldest (first) entry, or *head* of the queue, is processed first (see [Wikipedia: FIFO (computing and electronics)](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))).
+
+- **FLI**: Foreign Language Interface. Mentor Graphics' [ModelSim](https://www.mentor.com/products/fv/modelsim/)/[Questa](https://www.mentor.com/products/fv/questa/) tools implement an interface named *VHDL FLI*: "*FLI routines are C programming language functions that provide procedural access to information within Model Technology’s HDL simulator, vsim*".
+
+- **FOSS/FLOSS**: Free/Libre and Open Source Software.
+
+- **GCC**: the GNU Compiler Collection [@gcc].
+
+- **GDB**: the GNU Project Debugger [@gdb].
+
+- **GHDL**: open-source analyzer, compiler, simulator and (experimental) synthesizer for VHDL [@ghdl].
+
+- **GRT**: GHDL's RunTime library.
+
+- **HDL**: Hardware Description Language.
+
+- **HLS**: High Level Synthesis.
+
+- **IEEE**: Institute of Electrical and Electronics Engineers (see [ieee.org](https://www.ieee.org/)).
+
+- **IR**: Intermediate Representation.
+
+- **LCS**: Language Change Specification.
+
+- **LLVM**: a compiler infrastructure designed around a language-independent IR [@llvm].
+
+- **OSVVM**: Open Source VHDL Verification Methodology [@osvvm].
+
+- **PLI**: Program Language Interface. PLI was superseeded by VPI in IEEE Std 1364-2005, sometimes referred to as *PLI 2*.
+
+- **PPC**: commonly used to refer to PowerPC and/or Power ISA processors.
+
+- **PSL**: Property Specification Language, IEEE Std 1850, incorporated in IEEE Std 1076-2008 (see [Wikipedia: Property Specification Language](https://en.wikipedia.org/wiki/Property_Specification_Language)).
+
+- **QEMU**: a generic and open source machine emulator and virtualizer.
+
+- **RPC**: Remote Procedure Call.
+
+- **RTL**: Register-Transfer Level.
+
+- **UUT**: Unit Under Test.
+
+- **VASG**: VHDL Analysis and Standardization Group (see [eda-twiki.org/cgi-bin/view.cgi/P1076](http://www.eda-twiki.org/cgi-bin/view.cgi/P1076)).
+
+- **VC**: Verification Component.
+
+- **Verilator**: FLOSS tool for converting Verilog to a cycle-accurate behaviour model in C++ or SystemC [@verilator].
+
+- **Verilog**: a HDL, IEEE Std 1364. In 2009, it was merged into the SystemVerilog standard creating IEEE Std 1800 (see [Wikipedia: Verilog](https://en.wikipedia.org/wiki/Verilog)).
+
+- **VHDL**: VHSIC-HDL, Very High Speed Integrated Circuit Hardware Description Language, IEEE Std 1076 (see [Wikipedia: VHDL](https://en.wikipedia.org/wiki/VHDL)).
+  - Revisions: [1987](https://ieeexplore.ieee.org/document/26487), [1993](https://ieeexplore.ieee.org/document/392561), [2000](https://ieeexplore.ieee.org/document/893288), [2002](https://ieeexplore.ieee.org/document/1003477) (IEC 61691-1-1:2004), [2008](https://ieeexplore.ieee.org/document/4772740) (IEC 61691-1-1:2011), [2019](https://ieeexplore.ieee.org/document/8938196).
+  - Related standards:
+    - 1076.1 VHDL Analog and Mixed-Signal (VHDL-AMS)
+    - 1076.1.1 VHDL-AMS Standard Packages (stdpkgs)
+    - 1076.2 VHDL Math Package
+    - 1076.3 VHDL Synthesis Package (vhdlsynth) (numeric_std)
+    - 1076.3 VHDL Synthesis Package – Floating Point (fphdl)
+    - 1076.4 Timing (VHDL Initiative Towards ASIC Libraries: vital)
+    - 1076.6 VHDL Synthesis Interoperability (withdrawn in 2010)[11]
+    - 1164 VHDL Multivalue Logic (std_logic_1164) Packages
+
+- **VHPI**: VHDL Procedural Interface, incorporated in IEEE Std 1076-2008.
+
+- **VPI**: Verilog Procedural Interface, incorporated in IEEE Std 1364-2005 (see [Wikipedia: Verilog Procedural Interface](https://en.wikipedia.org/wiki/Verilog_Procedural_Interface)).
+
+- **VUnit**: an open source unit testing framework for VHDL/SystemVerilog [@vunit].
+
+- **XSI**: Xilinx Simulator Interface, "*a C/C++ application programming interface (API) to the Xilinx Vivado Simulator (xsim) that enables a C/C++ program to serve as the test bench for a HDL design*" [@xsi].

@@ -27,3 +27,7 @@ Subdirs in [vhpidirect](./vhpidirect) and [vpi](./vpi) contain groups of example
 additional examples. Explanations are available in the [docs](https://ghdl.github.io/ghdl-cosim).
 
 *This repository was created recently and multiple existing examples are not published yet. Find on-going work in issue [#1](https://github.com/ghdl/ghdl-cosim/issues/1) and in [open Pull Requests](https://github.com/ghdl/ghdl-cosim/pulls)*.
+
+---
+
+VASG: [[LCS-202x] VHDL DPI/FFI based on GHDL’s implementation of VHPIDIRECT](https://umarcor.github.io/ghdl-cosim/vhdl202x/index.html) ([PDF](https://github.com/umarcor/ghdl-cosim/blob/gh-pages/vhdl202x/vhdl202x-lcs-dpi.pdf)).

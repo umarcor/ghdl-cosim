@@ -21,6 +21,13 @@ jobs:
     - name: '🧰 Checkout'
       uses: actions/checkout@v2
 
+    - name: Build bookdown site and PDF
+      run: |
+        docker build -t bookdown - < vhdl202x-lcs-dpi/Rmd/Dockerfile
+        docker run --rm -v $(pwd):/src -w /src/vhdl202x-lcs-dpi bookdown
+        mkdir -p public
+        cp -r vhdl202x-lcs-dpi/_book public/vhdl202x
+
     - name: '📓 BuildTheDocs (BTD)'
       uses: buildthedocs/btd@v0
       with:

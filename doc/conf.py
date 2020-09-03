@@ -68,10 +68,8 @@ if (ROOT / "_theme").is_dir():
 else:
     html_theme = "alabaster"
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+html_extra_path = [str(Path(__file__).resolve().parent.parent / 'public')]
 
 html_logo = str(Path(html_static_path[0]) / "logo.png")
 html_favicon = str(Path(html_static_path[0]) / "icon.ico")
@@ -117,11 +115,12 @@ intersphinx_mapping = {
 
 # -- Sphinx.Ext.ExtLinks --------------------------------------------------
 extlinks = {
-   'wikipedia':  ('https://en.wikipedia.org/wiki/%s', None),
-   'ghdlsharp':  ('https://github.com/ghdl/ghdl/issues/%s', 'ghdl#'),
-   'ghdlissue':  ('https://github.com/ghdl/ghdl/issues/%s', 'issue #'),
-   'ghdlpull':   ('https://github.com/ghdl/ghdl/pull/%s', 'pull request #'),
-   'ghdlsrc':    ('https://github.com/ghdl/ghdl/blob/master/src/%s', ''),
-   'cosimsharp': ('https://github.com/ghdl/ghdl-cosim/issues/%s', 'ghdl-cosim#'),
-   'cosimtree':  ('https://github.com/ghdl/ghdl-cosim/blob/master/%s', ''),
+   'wikipedia':   ('https://en.wikipedia.org/wiki/%s', None),
+   'ghdlsharp':   ('https://github.com/ghdl/ghdl/issues/%s', 'ghdl#'),
+   'ghdlissue':   ('https://github.com/ghdl/ghdl/issues/%s', 'issue #'),
+   'ghdlpull':    ('https://github.com/ghdl/ghdl/pull/%s', 'pull request #'),
+   'ghdlsrc':     ('https://github.com/ghdl/ghdl/blob/master/src/%s', ''),
+   'cosimsharp':  ('https://github.com/ghdl/ghdl-cosim/issues/%s', 'ghdl-cosim#'),
+   'cosimtree':   ('https://github.com/ghdl/ghdl-cosim/blob/master/%s', ''),
+   'umarcortree': ('https://github.com/umarcor/ghdl-cosim/blob/develop/%s', ''),
 }
