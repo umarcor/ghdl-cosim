@@ -1,0 +1,97 @@
+# Existing interfaces
+
+As mentioned in the introduction, in the last three decades multiple foreign/co-simulation interfaces for HDL have been proposed. In this section, the most relevant characteristics of each of them are explained. Note that many definitions and references can be found in the [glossary](#glossary) at the end of this document. Hence, in this section, redundant references are avoided.
+
+## VHPI
+
+VHDL Procedural Interface (VHPI) was incorporated in VHDL 2008. It is the only co-simulation interface defined for VHDL. It's described as "*application-programming interface to VHDL tools that allows programmatic access to a VHDL model during its analysis, elaboration, and execution*". Therefore, it is meant for implementing non-trivial so-called "*VHPI applications*". The programming model is based on a reference C header file with several layers of nested structs and callbacks of specific types for hooking each of the analysis, elaboration and execution stages.
+
+Unfortunately, after more than a decade, the sparse or nonexistent support for the VHPI has been a problem. Compared to other interfaces, VHPI is so complicated and does not meet the needs of the average user. Therefore, it retarded interest by users, and that lack of interest has not pushed tool developers to go further. Anecdotically, GHDL supports VPI, but not VHPI, even though it's a VHDL only simulator.
+
+It is to be noted that Verilog went down a similar path. Verilog has had the PLI since day one; it was fairly straightforward and easy to use. Then, VPI came and complicated things. In fact, VPI and VHPI are conceptually quite similar. Finally, Verilog pushed back and the DPI was created. Therefore, when designing a VFFI for VHDL, it'd be sensible to have Verilog's journey in mind.
+
+Unlike Verilog users, who were accustomed to using a foreign interface and expected it to be available, VHDL have not had any foreign language interface traditionally. However, VHDL is known to be a more robust language, due to its strong typing system. Hence, there are VHDL specific cases that cannot be solved in the Verilog space. That's the critial mass for a VHDL FFI.
+
+TODO: https://forums.xilinx.com/t5/Simulation-and-Verification/Is-VHPI-support-planned-for-Vivado/td-p/562533
+
+## FLI
+
+*TBW*
+
+## XSI
+
+*TBW*
+
+## VPI
+
+*TBW*
+
+## DPI
+
+*TBW*
+
+## GHDL's VHPIDIRECT
+
+NOTE: As explained later, GHDL's VHPIDIRECT implementation is currently not compliant with the standard.
+
+GHDL has supported VPI and VHPIDIRECT for a long time. GHDL is known to work on x86, ARM and/or PPC devices. Hence, it is relevant that GHDL's VHPIDIRECT is available in many more platforms than other interfaces. This is not a limitation imposed by the interfaces, but because of the lack of implementations.
+In April 2020, the documentation of GHDL regarding co-simulation with foreign languages was split to a separate repository: [ghdl/ghdl-cosim](https://github.com/ghdl/ghdl-cosim). The main motivation to do so was to better document and support the particular implementation of VHPIDIRECT in GHDL. Docs were updated and +20 examples were gathered/added (others are being worked on): [ghdl.github.io/ghdl-cosim](https://ghdl.github.io/ghdl-cosim/). Those examples were contributed by Unai Martinez-Corral and user RocketRoss in GitHub. However, it is to be noted that most of them were based on existing code examples by others: Tristan Gingold, Yann Guidon, Rene Doss and Martin Strubel. See [ghdl/ghdl-cosim#1: Previous work and future ideas](https://github.com/ghdl/ghdl-cosim/issues/1).
+
+Before reworking ghdl-cosim, during 2019 Unai Martinez-Corral contributed [VUnit/cosim](https://github.com/VUnit/cosim) (see also [vunit.github.io/cosim](https://vunit.github.io/cosim/index.html)). As explained in [VHDL Libraries > Data Types > External VHDL API](https://vunit.github.io/data_types/user_guide.html#external-vhdl-api), the purpose of VUnit/cosim is to expose some of VUnit's internal data types through GHDL's VHPIDIRECT (see [Bridges > VHPIDIRECT](https://vunit.github.io/cosim/bridges/vhpidirect.html#bridges-vhpidirect)). Since VUnit's Communication Library and Verification Components Library are based on those internal data types, the ultimate goal is to allow message passing between queues written in different languages (VHDL and Python). The development to extend the approach to the communication library is currently stalled because of details of VHPIDIRECT which are undefined in the standard (thus implementation-dependent) and which are not explicitly documented in GHDL. After multiple conversations with Tristan Gingold (the author of GHDL), Bradley Harden did a detailed analysis of the complexity to have 1-to-1 mapping between VHDL procedures/functions and C/C++ functions, in the context of cross-language queues. See [VUnit/vunit#603](https://github.com/VUnit/vunit/issues/603).
+
+[hackfin/ghdlex](https://github.com/hackfin/ghdlex) and netpp, by Martin Strubel, compose a framework on top of GHDL's VHPIDIRECT to allow exposing variables and other properties through the network. It provides *virtual* consoles, FIFOs, RAMs, etc. It handles several undocumented types of GHDL. Unfortunately, it is undocumented too.
+
+GHDL is written in Ada. Ada and VHDL have multiple similarities. The compile and link models of Ada and C have multiple similarities. Overall, objects can be created in VHDL, Ada and/or C, and then linked together. Hence, the essence of how VHPIDIRECT is implemented in GHDL is that the runtime (GRT) exposes raw internal VHDL/Ada data structures/types. Unlike VPI or VHPI, there is no harness. However the following features are possible but undocumented:
+
+- Passing complex data types (fat pointers).
+- Executing VHDL functions/procedures from C.
+
+The details about how VHDL types are mapped to C are explained in [Type declarations](https://ghdl.github.io/ghdl-cosim/vhpidirect/declarations.html). The *fat pointers* mentioned there, which are used for unconstrained arrays and accesses to unconstrained arrays, are not documented. There is work in progress in [ghdl/ghdl-cosim#3](https://github.com/ghdl/ghdl-cosim/issues/3) to provide a header file that helps with manipulating those fat pointers. The main purpose is to support multidimensional arrays with dimensions of type natural. That is, strings, vectors, matrices, cubes... Such header might be used by some of the projects mentioned above (VUnit, ghdlex...). In fact, the purpose of this LCS is to include such header (an improved version of it) in the next revision of the standard. That is, to define the C representation of complex data types.
+
+Note that in the documentation of ghdl-cosim ([ghdl.github.io/ghdl-cosim](https://ghdl.github.io/ghdl-cosim/index.html)) the term VHPIDIRECT is used loosely. Strictly, "*Wrapping a simulation (ghdl_main)*" and "*Linking object files*" are features provided by GHDL/GRT, which are NOT defined in the standard. In fact, those are not available with GHDL's built-in in-memory backend (`mcode`). Those are only possible with LLVM or GCC. The same applies to section "*Dynamic loading*". Loading foreign objects (from stdlib or shared libs) in a simulation is possible through VHPIDIRECT; however, generating a simulation model as a shared library is a feature provided by GHDL/GRT. The motivation to have VHPIDIRECT and GRT features mixed together is, precisely, this LCS.
+
+Note also that option `-shared` was added to GHDL recently. Hence, there are still some issues when running simulations as shared libraries. See [ghdl/ghdl-cosim#15](https://github.com/ghdl/ghdl-cosim/pull/15).
+
+See [Examples](https://ghdl.github.io/ghdl-cosim/vhpidirect/examples/index.html) for an step-by-step introduction to these co-simulation features. The first example is as simple as calling `rand` from stdlib in VHDL. The most complex one is to have an RGB image buffer drawn in an X11 window at runtime (during simulation). I think this [Virtual VGA screen](https://ghdl.github.io/ghdl-cosim/vhpidirect/examples/arrays.html#virtual-vga-screen) is very illustrative, because the UUT is unmodified. A VHDL (testbench) module is used to monitor HSYNC, VSYNC and RGB *signals* and place them in a 2D array of integers (the framebuffer). Then, the framebuffer is shared with C by reference (avoiding memory duplication). Actually, two different C implementations are shown: one saves snapshots in PNG images and builds an animated GIF, the other one uses the X11 window.
+
+### Development
+
+Although undefined (or implementation dependent) in the standard, GHDL exposes arguments of [any](https://ghdl.github.io/ghdl-cosim/vhpidirect/declarations.html#restrictions-on-type-declarations) VHDL type through VHPIDIRECT. It is possible to inspect the structure of the fat pointers by using `gdb`:
+
+- Comment all the foreign attribute lines in the source.
+- Build the binary with GCC backend.
+- Execute the binary in `gdb`:
+  - `info functions <name>` to find the long name that the target function takes.
+  - `p <long_name>` to print the prototype of the function.
+  - `b <long_name>` to set a breakpoint.
+  - `r` to run until the breakpoint.
+  - `bt full` to see the arguments.
+
+For example:
+
+```
+(gdb) bt full
+#0  work__tb_c__ARCH__tb__print_string (PARAMS=0x557d3a627ef8, INSTANCE=0x557d3a627ee0) at tb_c.vhd:5
+        FRAMEPTR = 0x557d3a627f20
+        STATE = 21885
+        T0_0 = {dim_1 = {left = 761498336, right = 32765, dir = (unknown: 24), length = 0}}
+        T0_1 = 0x557d3a624710
+        T0_2 = {BASE = 0x557d3a6246f0, BOUNDS = 0x557d3a4b82d8 <__gnat_malloc+24>}
+        T0_3 = 0x557d3a4aef92 <<__ghdl_stack2_mark>+116>
+        T0_4 = 32765
+        T0_5 = 0x7ffd2d638ae0
+        T0_6 = 0x557d3a624710
+        _UI00000003 = {filename = 0x557d3a5486f0 <_UI00000000>, line = 8, col = 5}
+```
+
+<!--
+- Calling foreign subprograms from VHDL
+- Calling VHDL subprograms from a foreign language
+- Dynamic loading
+- Runtime management (CLI args, exit code, top-level generics, etc.)
+-->
+
+## CXXRTL
+
+- https://github.com/YosysHQ/yosys/tree/master/backends/cxxrtl
+- https://tomverbeure.github.io/2020/08/08/CXXRTL-the-New-Yosys-Simulation-Backend.html

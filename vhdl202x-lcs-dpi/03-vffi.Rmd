@@ -1,0 +1,419 @@
+# Proposal: VFFI
+
+In this section, VHPI definitions from the VHDL 2019 LRM are compared with GHDL's VHPIDIRECT implementation. Careful reading reveals that both sources solve complementary problems:
+
+> *VHDL 2019 LRM, 17.1 General*:
+>
+> The VHDL Procedural Interface (VHPI) is an application-programming interface to VHDL tools that allows programmatic access to a VHDL model during its analysis, elaboration, and execution.
+
+> *VHDL 2019 LRM, 17.2.1 General*:
+>
+> The VHPI consists of two aspects:
+> - An information model that represents the topology and state of a VHDL model.
+> - A number of functions that operate on the information model to access or affect the state of the VHDL model and that interact with tools during analysis, elaboration, or execution of the VHDL model.
+
+> https://ghdl.github.io/ghdl-cosim/vhpidirect:
+>
+> Interfacing with foreign languages through VHPIDIRECT is possible on any platform. You can reuse or define a subprogram in a foreign language (such as C or Ada) and import it into a VHDL design.
+
+Hence, GHDL is currently not compliant with the VHPI, because it is using VHPIDIRECT's syntax to provide a feature which is out of scope of the wording in the standard. The general conception of VPI and/or VHPI is that those are interfaces to be used by software developers or, at least, people that don't want (or cannot) modify VHDL sources. As a result, the wording explains that the tool/simulator creates a model representing the VHDL sources/design, and a C/C++ interface is provided to interact with the design using software only. So, "*interact with tools during analysis, elaboration, or execution of the VHDL model*" in the LRM is describing a completely external interface that treats the VHDL model as an object from start to end. Conversely, in GHDL's VHPIDIRECT, analysis, elaboration and execution are done as any other regular VHDL design (the workflow is absolutely VHDL-centric), but specific (user pre-defined) foreign functions can be called from VHDL, to be executed in the same cycle. The conception of VHPIDIRECT as used in GHDL is just the opposite to VHPI: allowing a design written in VHDL to execute existing (preferredly unmodified) subprograms written in a foreign language.
+
+## Registration of foreign subprograms
+
+From Annex B of the LRM, when registering foreign subprograms, the following structure must be used:
+
+```c
+typedef struct vhpiForeignDataS {
+  vhpiForeignKindT kind;
+  char * libraryName;
+  char * modelName;
+  void (*elabf)(const struct vhpiCbDataS *cb_data_p);
+  void (*execf)(const struct vhpiCbDataS *cb_data_p);
+} vhpiForeignDataT;
+```
+
+And the definition of `vhpiCbDataS` is the following:
+
+```c
+typedef struct vhpiCbDataS {
+  int32_t reason;                              /* callback reason */
+  void (*cb_rtn) (const struct vhpiCbDataS *); /* call routine */
+  vhpiHandleT obj;                             /* trigger object */
+  vhpiTimeT *time;                             /* callback time */
+  vhpiValueT *value;                           /* trigger object value */
+  void *user_data;                             /* pointer to user data to be passed to the callback function */
+} vhpiCbDataT;
+```
+
+As explained, those definitions describe a "C centric workflow", where the main entrypoint to some application (tool) is written in C/C++. As a result, when defining callbacks and registering them in some pre-existing VHDL design (model), multiple context-related parameters need to be provided. Those are `libraryName`, `modelName`, `reason`, `object`, etc. On the other hand, when direct binding is used instead, `kind`, `libraryName` and `modelName` are implicit; `elabf` is optional; and `execf` suffices (see *VHDL 2019 LRM, 20.2.4.3 Standard direct binding*). GHDL supports direct binding only.
+
+Due to the current wording in the LRM, it is unclear whether direct binding requires a function pointer to be declared, a function name, or any of them. In *VHDL 2019 LRM, 20.2.4.3 Standard direct binding*, `execution_function_name` is used, which is `execution_function_name ::= C_identifier`. In the structs above, `*elabf` and `*execf` are declared as pointers to functions. However, GHDL requires VHPIDIRECT strings to contain the name of functions, not pointers. This should be explicit. IMHO, both functions and pointers should be allowed.
+
+## Calling convention
+
+According to the LRM, any foreign subprogram must be defined in C as receiving a single argument of type `vhpiCbDataS*` (see prototypes of `*elabf` and `*execf` above). Then, user data is passed in a field inside that struct. Conversely, GHDL allows binding foreign functions with multiple arguments of different types, and no intermediate struct is used. As a result, GHDL is not compliant with the standard; however, this is the main motivation for this proposal:
+
+Currently the standard does not allow binding existing functions from std C lib (e.g. `rand`), or from any other existing shared library, without additional and verbose plumbing:
+
+- Simulators need to implement providing all the fields/data in `vhpiCbDataS` and `vhpiForeignDataS`, even if `execf` and `user_data` are needed only.
+- Even if the arguments/interfaces of the foreign existing functions match 1-to-1 with VHDL types (see below), users need to use two intermediate structs in C.
+
+Overall, VHPI seems to fit the requirements of complex testing infrastructures in large design teams with different roles, some of them focused on verification. However, it feels too complex for the average RTL designer, and the learning curve is steep.
+
+At the same time, VHPI seems to mimick the features and workflow of VPI, as if it was conceived just as the equivalent in a different language. As a matter of fact, GHDL implemented VPI first. When VHPI was published, developers didn't see a motivation to duplicate the effort for no evident benefit. Still, the concept of "direct binding" was considered valuable, and foreign attribute `VHPIDIRECT` was implemented. Either because a misunderstanding, or because a draft was used, GHDL's implementation of VHPIDIRECT resembles [Foreign Function Interface (FFI)](https://en.wikipedia.org/wiki/Foreign_function_interface) mechanisms in other languages.
+
+The current proposal is to define an alternative calling convention in the standard, named VHDL Foreign Function Interface (VFFI), based on what GHDL provides already:
+
+```
+standard_direct_subprogram_binding ::=
+VFFI object_library_specifier execution_specifier
+```
+
+Where `execution_specifier` is either `function_name` or `function_pointer_name`. The prototype of the function needs NOT to be provided in the foreign attribute declaration, but the number of arguments should match the number of arguments/interfaces in the VHDL subprogram, and the sizes of the types of each argument/interface must match (see below).
+
+From a practical point of view, if a user wants to call a foreign C function from VHDL and pass a contrained array of integers, with VHPI iteration and calling multiple functions is required (see comment by PeterLadow in [DpiProposal#General_Comments](http://www.eda-twiki.org/cgi-bin/view.cgi/P1076/DpiProposal#General_Comments)). With VFFI (GHDL's VHPIDIRECT), a pointer would be passed, which can be either indexed or dereferenced from C, and data can be manipulated in-place. For short code examples, see [ghdl-cosim: `vhpidirect/quickstart/random/tb.vhd`](https://github.com/ghdl/ghdl-cosim/blob/master/vhpidirect/quickstart/random/tb.vhd) or [ghdl-cosim: `vhpidirect/quickstart/math/tb.vhd`](https://github.com/ghdl/ghdl-cosim/blob/master/vhpidirect/quickstart/math/tb.vhd). Note that in those examples, writing C code is not required, because foreign functions are already defined in the std C lib or in a shared library.
+
+## Deferred definition of external subprograms {#deferreddef}
+
+Given the following VHDL declaration:
+
+```vhdl
+procedure vplot (x: std_logic_vector(0 to 15)) is
+begin report "VFFI vplot" severity failure; end;
+attribute foreign of vplot : procedure is "VFFI plot";
+```
+
+either of the following should work:
+
+```c
+void plot(int* x) {
+  // do something
+}
+```
+
+or
+
+```c
+void (*plot)(int*);
+```
+
+Furthermore, since the prototype is known from the definition of the VHDL procedure, in the latter, the C source might be not required:
+
+```vhdl
+attribute foreign of plot: procedure is "VFFI _protoype_";
+```
+
+The purpose being to build VHDL sources without providing a body for the foreign subprogram. Then, from any foreign language:
+
+1. Load the VHDL model.
+2. Set define the `plot`.
+3. Execute the simulation.
+
+This approach is similar to the default workflow with VHPI as defined in the standard, albeit without intermediate structs.
+
+## Function overloading
+
+VHDL subprograms might be overloaded, while C subprograms cannot. ~~It should be possible to have a couple of VHDL subprograms with the same name, each mapped to a different foreign subprogram~~. Tristan pointed out that it is possible to provide a signature when defining an attribute. See VHDL 2019 LRM, 7.2 Attribute specification. Hence, although verbose, the following works:
+
+```vhdl
+  function xyce_run(
+    id      : string;
+    reqTime : real
+  ) return integer;
+  attribute foreign of xyce_run : function is "VHPIDIRECT xhdl_run";
+
+  function xyce_run(
+    id      : string;
+    reqTime : real;
+    arrTime : real_vector;
+    arrVolt : real_vector
+  ) return integer;
+  attribute foreign of xyce_run[
+    string,
+    real,
+    real_vector,
+    real_vector
+    return integer
+  ] : function is "VHPIDIRECT xhdl_run_1D";
+
+  type arr2D_t is array (natural range <>, natural range <>) of real;
+  function xyce_run(
+    id      : string;
+    reqTime : real;
+    arr2D   : arr2D_t
+  ) return integer;
+  attribute foreign of xyce_run[
+    string,
+    real,
+    arr2D_t
+    return integer
+  ] : function is "VHPIDIRECT xhdl_run_2D";
+```
+
+## Interface modes: in, out, inout
+
+For the `in` mode, non-composite types are passed by value, which correspond to the standard C/Ada mechanism. However, `out` and `inout` interfaces and complex types need special handling.
+
+GHDL collects the interfaces of modes `out` or `inout` in a record/struct, which is passed by reference as the first argument to the foreign subprogram. The tool allocates the facade of the struct, but not the buffers that contain the actual data. Hence, foreign functions need to allocate and assign data to the placeholders. As a consequence, it is not suggested to use `out` and/or `inout` modes in foreign subprograms with GHDL, since they are not portable.
+
+The proposed standardization is NOT to gather the "special" interfaces in any record/struct. Instead, the position of the arguments should be preserved, and the facade for each "special" interface should be provided in the expected position. Naturally, modes `out` or `inout` will not be compatible with pre-existing C libraries. However, because it is a direct approach, the glue logic is significantly less complex than using a full-featured VHPI API.
+
+## Types
+
+On the one hand, the representation of the types of the interfaces between VHDL and foreign languages when using GHDL's VHPIDIRECT are defined in [Type declarations > Restrictions on type declarations](https://ghdl.github.io/ghdl-cosim/vhpidirect/declarations.html#restrictions-on-type-declarations). On the other hand, in the VHDL 2019 LRM the same content is defined in chapter/clause "*22. VHPI value access and update*" and in "*Annex B (normative) VHPI header file*". In this section, both sources are compared.
+
+### Enumeration
+
+> *VHDL 2019 LRM, 22.2.2 vhpiEnumT and vhpiSmallEnumT*:
+>
+> A value of type `vhpiEnumT` or `vhpiSmallEnumT` represents a value of a VHDL enumeration type.
+> A value of type `vhpiEnumT` shall be represented with at least 32 bits, and a value of type `vhpiSmallEnumT` shall be represented with at least 8 bits.
+> The value represented by a given value of either type is an enumeration value whose position number is the given value, interpreted as an unsigned binary number.
+
+> *GHDL*
+>
+> 8 bit word, or, if the number of literals is greater than 256, by a 32 bit word. There is no corresponding C type, since arguments are not promoted.
+
+Both approaches are similar. However, in GHDL, the tool implicitly decides whether `vhpiEnumT` or `vhpiSmallEnumT` are to be used, depending on the size of the enumeration in VHDL. In VHPI, it feels that users can get a value of an small enumeration as a 32 bit word. That is not supported in GHDL.
+
+### Integer
+
+> *VHDL 2019 LRM, 22.2.3 vhpiIntT and vhpiLongIntT*:
+>
+> A value of type `vhpiIntT` or `vhpiLongIntT` represents a value of a VHDL integer type.
+> A value of type `vhpiIntT` shall be represented with at least 32 bits, and a value of type `vhpiLongIntT` shall be represented with at least 64 bits.
+> The value represented by a given value of either type is the given value, interpreted as a signed twos-complement binary number.
+
+> *GHDL*
+>
+> 32 bit word. Generally, int for C or Integer for Ada.
+
+GHDL does not support integers of 64 bits yet. Still, the implementation is likely to be similar to the enumerations (see above).
+
+### Character
+
+> *VHDL 2019 LRM, 22.2.4 vhpiCharT*:
+>
+> A value of type `vhpiCharT` represents a value of a VHDL character type.
+> The value shall be represented with at least 8 bits.
+> The value represented by a given value of type `vhpiCharT` is a character value whose position number is the given value, interpreted as an unsigned binary number.
+
+In GHDL, characters are considered enumerations with 256 literals (8 bits). Hence, both approaches are equivalent.
+
+### Real
+
+> *VHDL 2019 LRM, 22.2.5 vhpiRealT*:
+>
+> A value of type `vhpiRealT` represents a value of a VHDL floating-point type.
+> The value shall be represented with at least 64 bits.
+> The value represented by a given value of type `vhpiRealT` is the given value, interpreted according to the chosen representation for floating-point types (see 5.2.5.1).
+
+> *GHDL*
+>
+> 64 bit floating point word. Generally, double for C or Long_Float for Ada.
+
+Both approaches are equivalent.
+
+### Physycal
+
+> *VHDL 2019 LRM, 22.2.6 vhpiPhysT and vhpiSmallPhysT*:
+>
+> A value of type `vhpiPhysT` is called a physical structure and represents a value of a physical type.
+> The position number of a physical structure is the signed integer represented by the concatenation of the high and low members of the physical structure to form a 64-bit twos-complement binary number, with the high member as the most significant part and the low member as the least significant part.
+>
+> A value of type `vhpiSmallPhysT` also represents a value of a physical type.
+> The value shall be represented with at least 32 bits. The position number of the value of type `vhpiSmallPhysT` is the value interpreted as a signed twos-complement binary number.
+>
+> If a physical structure or value of type `vhpiSmallPhysT` occurs as part of a value structure or as an element of an array pointed to by a value structure, its position number determines the value represented by the value structure or value of type `vhpiSmallPhysT`, as described in 22.2.8. Otherwise, the physical structure or value of type `vhpiSmallPhysT` represents a value of a physical type. The value is the product of the position number of the physical structure or value of type `vhpiSmallPhysT` and a unit determined from the context in which the physical structure or value of type `vhpiSmallPhysT` occurs.
+
+> *GHDL*
+>
+> 64 bit word. Generally, long long for C or Long_Long_Integer for Ada.
+
+Both approaches are similar. However, GHDL does not support small physical types.
+
+### Time
+
+> *VHDL 2019 LRM, 22.2.7 vhpiTimeT*:
+>
+> A value of type `vhpiTimeT` is called time structure and represents a time value.
+> The position number of a time structure is the signed integer represented by the concatenation of the high and low members of the time structure to form a 64-bit twos-complement binary number, with the high member as the most significant part and the low member as the least significant part.
+>
+> If a time structure occurs as part of a value structure or as an element of an array pointed to by a value structure, its position number determines the value represented by the value structure, as described in 22.2.8. Otherwise, the time structure represents a value of type TIME defined in package STANDARD. The value is the product of the position number of the time structure and the resolution limit of the tool.
+>
+> NOTE—A VHPI program can determine the resolution limit with the function call `vhpi_get_phys(vhpiResolutionLimit, NULL)`.
+
+In GHDL, although undocumented yet, `int64_t` is used.
+
+### Composite
+
+> *VHDL 2019 LRM, 22.2.8 vhpiValueT*:
+>
+> A value of type `vhpiValueT` is called a value structure and represents a scalar value, a one-dimensional array of scalar values, or a value of any type represented in an implementation-defined internal representation.
+>
+> The `format` member of a value structure specifies the format of the value structure, that is, a value of type `vhpiFormatT` that determines how the value is represented. The value member of the value structure is a union that contains the value in the appropriate representation. The following formats are specified by this standard:
+>
+> - `vhpiBinStrVal`, `vhpiOctStrVal`, `vhpiDecStrVal`, `vhpiHexStrVal`
+> - `vhpiEnumVal`, `vhpiSmallEnumVal`, `vhpiIntVal`, `vhpiLongIntVal`, `vhpiLogicVal`, `vhpiRealVal`, `vhpiStrVal`, `vhpiCharVal`, `vhpiTimeVal`, `vhpiPhysVal`, `vhpiSmallPhysVal`, `vhpiObjTypeVal`, `vhpiPtrVal`
+> - `vhpiEnumVecVal`, `vhpiSmallEnumVecVal`, `vhpiIntVecVal`, `vhpiLongIntVecVal`, `vhpiLogicVecVal`, `vhpiRealVecVal`, `vhpiTimeVecVal`, `vhpiPhysVecVal`, `vhpiSmallPhysVecVal`, `vhpiPtrVecVal`, `vhpiRawDataVal`
+>
+> An implementation may specify further formats and the way in which values are represented for those formats.
+>
+> If a value structure is used by a VHPI program as an argument to the `vhpi_get_value` function and the format of the value structure specifies an array, string, or internal representation, the VHPI program shall set the `bufSize` member of the value structure to the number of bytes of storage allocated by the VHPI program for storage of the value (see 23.19).
+>
+> If the format of a value structure used to represent a value specifies an array or string representation, the `numElems` member of the value structure specifies the number of elements in the array or string representation of the value represented by the value structure. If the value is represented as a string, the number of elements excludes the null termination character of the string.
+>
+> If the format of a value structure used to represent a value specifies a physical type or time type representation, the `unit` member of the value structure specifies a unit of the physical or time type. The position number of the value represented by the value structure is the product of the position number of the unit and the position number of the physical or time structure or value of type `vhpiSmallPhysT` used to represent the value.
+>
+> NOTE 1—A VHPI program that allocates buffer storage for a string to be written by a call to the `vhpi_get_value` function should allow storage for the null termination character. The value written to the `bufSize` member of the value structure should be at least one more than the length of the string.
+>
+> NOTE 2—The `vhpiRawDataVal` format allows a VHPI program to read the value of an object without requiring the tool to reformat the value. An implementation may allow a VHPI program to read the value of an object in its internal representation and subsequently to set the value of an object of the same type using the value, thus avoiding the performance impact of reformatting.
+
+```c
+typedef struct vhpiValueS {
+  vhpiFormatT format;
+  size_t bufSize;
+  int32_t numElems;
+  vhpiPhysT unit;
+  union {
+    vhpiEnumT      enumv,      *enumvs;
+    vhpiSmallEnumT smallenumv, *smallenumvs;
+    vhpiIntT       intg,       *intgs;
+    vhpiLongIntT   longintg,   *longintgs;
+    vhpiRealT      real,       *reals;
+    vhpiSmallPhysT smallphys,  *smallphyss;
+    vhpiPhysT      phys,       *physs;
+    vhpiTimeT      time,       *times;
+    vhpiCharT      ch,         *str;
+    void           *ptr,       **ptrs;
+  } value;
+} vhpiValueT;
+```
+
+Note that the types in the `value` union are the ones listed in previous subsections, plus `void`.
+
+> *GHDL*
+>
+> Composite types:
+>
+> - Records are represented like a C structure and are passed by reference to subprograms.
+> - Arrays with static bounds are represented like a C array, whose length is the number of elements, and are passed by reference to subprograms.
+> - Unconstrained arrays are represented by a fat pointer. It is not suggested to use unconstrained arrays in foreign subprograms.
+> - Accesses to an unconstrained array are fat pointers. Other accesses correspond to an address/pointer and are passed to a subprogram like other non-composite types.
+> - Files are represented by a 32 bit word, which corresponds to an index in a table.
+
+Once again, the most significant difference is that VHPI requires an intermediate struct to be used, and field `format` defines the type of the `value`. Conversely, in GHDL the format is implicit (because it is a direct interface), and only the value is passed.
+
+Furthermore, in VHPI one-dimensional arrays are defined only. Supporting other types through an implementation-defined internal representation is allowed, but undefined. This is reflected in the existence of fields `bufSize` and `numElems`, which can contain the size of a single dimension. GHDL supports either constrained or unconstrained multi-dimensional arrays, but uses different approaches:
+
+- Constrained arrays are passed by reference, and no information about the size/length is given explicitly. This is true for multi-dimensional arrays too. Those are ordered in row-major or column-major order, depending on the underlying compiler/architecture.
+  - Naturally, due to the strong typing in VHDL, it is up to the users to pass sizes as additional arguments (see [ghdl-cosim: Examples > Arrays > Constrained/bounded integer arrays > Sized in VHDL](https://umarcor.github.io/ghdl-cosim/vhpidirect/examples/arrays.html#sized-in-vhdl) and [github.com/ghdl/ghdl-cosim/tree/master/vhpidirect/arrays/intvector/vhdlsized](https://github.com/ghdl/ghdl-cosim/tree/master/vhpidirect/arrays/intvector/vhdlsized)). This is flexible enough to interact with predefined functions that require a pointer and several constants, but also with functions that expect those to be wrapped in some struct/record.
+  - Note that the actual size of the buffer is implicit, because both VHDL and C are aware of the dimensions and the type of the values in the array. Furthermore, the type of the values can be any simple or composite/nested type. E.g., a constrained multi-dimensional array of records containing constrained one-dimensional arrays and integer fields/elements.
+
+- Unconstrained arrays are passed as fat pointers. By the same token, unconstrained arrays in nested structures (records/arrays) are fat pointers too. Strictly, it might be considered that this is covered by the standard as `vhpiRawDataVal`, which is explained as "*an implementation may allow a VHPI program to read the value of an object in its internal representation*". However, the purpose of `vhpiRawDataVal` is "*to set the value of an object of the same type using the value, thus avoiding the performance impact of reformatting*". In the context of GHDL and of this proposal, the purpose is to actually use/modify the content. Hence, it needs to be defined.
+
+The proposal is to define fat pointers as follows:
+
+```c
+typedef struct {
+  void* data;
+  int dim;
+  void* bounds;
+} fat_pointer_t;
+```
+
+The type of `data` would be defined by the type of the values in the array, according to the previous discussions. `dim` would tell the number of dimensions of the (multi-dimensional) array. Last, `bounds` would be an array of a type defined by the type of index used in VHDL. This is the major difference compared to `vhpiValueS`: allowing any type of index, instead of being constrained to `size_t bufSize` and `int32_t numElems`.
+
+The most common index type is `integer` or `natural`, which translates to:
+
+```c
+typedef struct {
+  int32_t left;
+  int32_t right;
+  int32_t dir;
+} range_t;
+```
+
+For example, `type arr_t is array (natural range <>, natural range <>, natural range <>) of std_logic_vector(7 downto 0);` would be represented as follows:
+
+```c
+typedef struct {
+  char* data;
+  int dim;
+  range_t* bounds;
+} fat_pointer_natural_multidim_array_of_stdv_t;
+```
+
+```yml
+{
+  data: char*,
+  dim: 3,
+  [
+    {
+        left: int,
+        right: int,
+        dir: int,
+    },
+    {
+        left: int,
+        right: int,
+        dir: int,
+    },
+    {
+        left: int,
+        right: int,
+        dir: int,
+    }
+  ]
+}
+```
+
+In fact, these structs might be proposed as an update to `vhpiValueS`:
+
+```c
+typedef struct vhpiValueS {
+  vhpiFormatT format;
+  int dim;
+  void* bounds;
+  size_t bufSize;
+  vhpiPhysT unit;
+  union {
+    vhpiEnumT      enumv,      *enumvs;
+    vhpiSmallEnumT smallenumv, *smallenumvs;
+    vhpiIntT       intg,       *intgs;
+    vhpiLongIntT   longintg,   *longintgs;
+    vhpiRealT      real,       *reals;
+    vhpiSmallPhysT smallphys,  *smallphyss;
+    vhpiPhysT      phys,       *physs;
+    vhpiTimeT      time,       *times;
+    vhpiCharT      ch,         *str;
+    void           *ptr,       **ptrs;
+  } value;
+} vhpiValueT;
+```
+
+However, this would be a breaking change (as it would effectively deprecate `vhpi*VecVal` types) that the comittee might not want to introduce. Instead, the current proposal is to add a `vffi_user.h` file in the standard, which complements `vhpi_user.h`. All common types can be reused, and fat pointers for unconstrained, accesses to an unconstrained arrays, etc. would be defined in the new header file; along with helper function for accessing the most common multi-dimensional arrays.
+
+There is a demo in ghdl-cosim's fork of U. Martinez-Corral which showcases how `vfii_user.h` would look like, and how helper functions can be used in different use cases. See [umarcor/ghdl-cosim@develop: `vhpidirect/vffi_user.h`](https://github.com/umarcor/ghdl-cosim/blob/develop/vhpidirect/vffi_user.h). Nevertheless, note that the demo is based on the current implementation of VHPIDIRECT in GHDL. It is expected to change after the outcome of this proposal. Instead of exposing the internal representation of fat pointers, an intermediate abstraction layer will be used in GHDL for complying with the standard.
+
+## DpiProposal
+
+As mentioned in the introduction, in VASG's TWIKI there is a proposal by Peter Flake since 2011 titled [DpiProposal](http://www.eda-twiki.org/cgi-bin/view.cgi/P1076/DpiProposal). The main purpose of that proposal was to allow execution of VHDL subprograms from foreign languages. However, since it is an enhancement to VHPI, other related features are being added to that proposal. In fact, during the last months, this proposal and the one by Peter Flake are being blended, as a result of the discussions in the VASG. Hence, this subsection contains the relevant differences between both proposals, which have not been polished yet.
+
+> Accessed on 2020/09/02
+>
+> New FOREIGN attributes are proposed. The attributes should include the language name, so that multiple languages can be supported by multiple attributes. A new attribute EXPORT is proposed, which has no effect on normal VHDL code but creates access for a foreign language. In the case of C the names IMPORT_C and EXPORT_C are proposed to minimize clashes with existing code. These are to be used with strings of C for subprogram import and export. In the case of SystemVerilog the names IMPORT_SV and EXPORT_SV are proposed.
+
+IMHO, attribute `EXPORT` is redundant. `attribute FOREIGN of G: function is "EXPORT_C g";` is already expressive, and an existing attribute is reused.
+
+> Accessed on 2020/09/02
+>
+> The foreign language equivalents of other standard VHDL data types should be specified by the tool vendor as a C header or SystemVerilog include file. It is up to the tool to check the mapping between the types. User-defined types such as enumerations need to be re-specified in the foreign language. It is up to the user to ensure that the formals in the foreign languge match the formals in VHDL.
+
+I feel that this falls short in providing a standard interface. Vendors providing potentially incompatible C headers, would force users to write several versions of the same C functions, just to comply with vendor details. Instead, I believe that vendors should make that "bridging" C header part of their codebase. So, a single VHDL source and a single matching C source should work equally with any simulator/tool. Moreover, this is coherent with how VHPI was conceived. Having 10+ vector types defined in VHPI but not in FFI/DPI feels incoherent. As explained above, defining the structure to derive complex/composite types seems feasible.
+
+## A summary
+
+Providing a direct interface that allows VHDL to reuse the FFI mechanism already available in other languages is a very useful enhacement for allowing reuse of existing advanced libraries in C, Ada, Python, Ruby, Julia, Rust, etc. Many of those languages are used in data science, where large amounts of multi-dimensional data are processed. At the same time, precisely due to the high dimensionality of data sets, usage of hardware design languages/generators and FPGAs accelerators is growing. In this context, it feels sensible to standardize not only scalar types, but also the types used for matrices, cubes and other multi-dimensional structures. That would allow known projects (such as numpy or tensorflow) to provide "VHDL bindings", by writing VHDL and C sources once only.
+
+Terms "GHDL's VHPIDIRECT", VFFI, VDPI, DPI, etc. in this document, all refer to the same concept: a new calling convention and an enhancement to the features of attribute `FOREIGN`.

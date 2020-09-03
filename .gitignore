@@ -15,4 +15,5 @@ tb*
 .vunit_hash
 __pycache__
 doc/_build/
+vhdl202x-lcs-dpi/_book
 vunit_out/
