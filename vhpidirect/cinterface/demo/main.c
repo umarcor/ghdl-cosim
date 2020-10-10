@@ -26,10 +26,10 @@ int* len3;
 bounds_t* string_bounds;
 ghdl_AccNaturalDimArr_t* line;
 
-int getFlatArrayIndex(int* dimIndex, int* dimLengths, int dims){
-  int indx = dimIndex[0];
-	for (int i = 1; i < dims; i++)
-		indx = dimIndex[i] + dimLengths[i]*indx;
+int getFlatArrayIndex(int* dimIndices, int* dimLengths, int dims){
+  int indx = dimIndices[0];
+	for (int i = 1; i < dims; i++)//Dimension-Indices listed in decreasing dimensionality (Big-Endian)
+		indx = indx*dimLengths[i] + dimIndices[i];
 	return indx;
 }
 
