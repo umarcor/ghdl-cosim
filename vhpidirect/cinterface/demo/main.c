@@ -26,13 +26,11 @@ int* len3;
 bounds_t* string_bounds;
 ghdl_AccNaturalDimArr_t* line;
 
-int getFlatArrayIndex(int* dimIndex, int* lens, int dims){
-  if(dims == 1){
-    return dimIndex[0];
-  }
-  else{
-    return dimIndex[dims-1] + (lens[dims-1]*getFlatArrayIndex(dimIndex, lens, dims-1));
-  }
+int getFlatArrayIndex(int* dimIndices, int* dimLengths, int dims){
+  int indx = dimIndices[0];
+	for (int i = 1; i < dims; i++)//Dimension-Indices listed in decreasing dimensionality (Big-Endian)
+		indx = indx*dimLengths[i] + dimIndices[i];
+	return indx;
 }
 
 void testCinterface(
