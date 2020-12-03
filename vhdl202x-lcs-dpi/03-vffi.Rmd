@@ -396,22 +396,6 @@ However, this would be a breaking change (as it would effectively deprecate `vhp
 
 There is a demo in ghdl-cosim's fork of U. Martinez-Corral which showcases how `vfii_user.h` would look like, and how helper functions can be used in different use cases. See [umarcor/ghdl-cosim@develop: `vhpidirect/vffi_user.h`](https://github.com/umarcor/ghdl-cosim/blob/develop/vhpidirect/vffi_user.h). Nevertheless, note that the demo is based on the current implementation of VHPIDIRECT in GHDL. It is expected to change after the outcome of this proposal. Instead of exposing the internal representation of fat pointers, an intermediate abstraction layer will be used in GHDL for complying with the standard.
 
-## DpiProposal
-
-As mentioned in the introduction, in VASG's TWIKI there is a proposal by Peter Flake since 2011 titled [DpiProposal](http://www.eda-twiki.org/cgi-bin/view.cgi/P1076/DpiProposal). The main purpose of that proposal was to allow execution of VHDL subprograms from foreign languages. However, since it is an enhancement to VHPI, other related features are being added to that proposal. In fact, during the last months, this proposal and the one by Peter Flake are being blended, as a result of the discussions in the VASG. Hence, this subsection contains the relevant differences between both proposals, which have not been polished yet.
-
-> Accessed on 2020/09/02
->
-> New FOREIGN attributes are proposed. The attributes should include the language name, so that multiple languages can be supported by multiple attributes. A new attribute EXPORT is proposed, which has no effect on normal VHDL code but creates access for a foreign language. In the case of C the names IMPORT_C and EXPORT_C are proposed to minimize clashes with existing code. These are to be used with strings of C for subprogram import and export. In the case of SystemVerilog the names IMPORT_SV and EXPORT_SV are proposed.
-
-IMHO, attribute `EXPORT` is redundant. `attribute FOREIGN of G: function is "EXPORT_C g";` is already expressive, and an existing attribute is reused.
-
-> Accessed on 2020/09/02
->
-> The foreign language equivalents of other standard VHDL data types should be specified by the tool vendor as a C header or SystemVerilog include file. It is up to the tool to check the mapping between the types. User-defined types such as enumerations need to be re-specified in the foreign language. It is up to the user to ensure that the formals in the foreign languge match the formals in VHDL.
-
-I feel that this falls short in providing a standard interface. Vendors providing potentially incompatible C headers, would force users to write several versions of the same C functions, just to comply with vendor details. Instead, I believe that vendors should make that "bridging" C header part of their codebase. So, a single VHDL source and a single matching C source should work equally with any simulator/tool. Moreover, this is coherent with how VHPI was conceived. Having 10+ vector types defined in VHPI but not in FFI/DPI feels incoherent. As explained above, defining the structure to derive complex/composite types seems feasible.
-
 ## A summary
 
 Providing a direct interface that allows VHDL to reuse the FFI mechanism already available in other languages is a very useful enhacement for allowing reuse of existing advanced libraries in C, Ada, Python, Ruby, Julia, Rust, etc. Many of those languages are used in data science, where large amounts of multi-dimensional data are processed. At the same time, precisely due to the high dimensionality of data sets, usage of hardware design languages/generators and FPGAs accelerators is growing. In this context, it feels sensible to standardize not only scalar types, but also the types used for matrices, cubes and other multi-dimensional structures. That would allow known projects (such as numpy or tensorflow) to provide "VHDL bindings", by writing VHDL and C sources once only.
