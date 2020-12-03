@@ -394,7 +394,7 @@ typedef struct vhpiValueS {
 
 However, this would be a breaking change (as it would effectively deprecate `vhpi*VecVal` types) that the comittee might not want to introduce. Instead, the current proposal is to add a `vffi_user.h` file in the standard, which complements `vhpi_user.h`. All common types can be reused, and fat pointers for unconstrained, accesses to an unconstrained arrays, etc. would be defined in the new header file; along with helper function for accessing the most common multi-dimensional arrays.
 
-There is a demo in ghdl-cosim's fork of U. Martinez-Corral which showcases how `vfii_user.h` would look like, and how helper functions can be used in different use cases. See [umarcor/ghdl-cosim@develop: `vhpidirect/vffi_user.h`](https://github.com/umarcor/ghdl-cosim/blob/develop/vhpidirect/vffi_user.h). Nevertheless, note that the demo is based on the current implementation of VHPIDIRECT in GHDL. It is expected to change after the outcome of this proposal. Instead of exposing the internal representation of fat pointers, an intermediate abstraction layer will be used in GHDL for complying with the standard.
+There is a demo in ghdl-cosim, which showcases how `vfii_user.h` would look like, and how helper functions can be used in different use cases. See [ghdl/ghdl-cosim: `vhpidirect`](https://github.com/ghdl/ghdl-cosim/blob/master/vhpidirect). Nevertheless, note that the demo is based on the current implementation of VHPIDIRECT in GHDL. It is expected to change after the outcome of this proposal. Instead of exposing the internal representation of fat pointers, an intermediate abstraction layer will be used in GHDL for complying with the standard.
 
 ## A summary
 
