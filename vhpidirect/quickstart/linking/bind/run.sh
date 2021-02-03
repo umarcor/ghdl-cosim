@@ -33,31 +33,25 @@ echo "Execute tb_o"
 
 # OR
 
-if [ "x${_os}" != "xwindows" ]; then
-  # FIXME: This should work on MSYS2, but the output of '--list-link' is broken.
-  # The returned paths contain mixed '\' and '/'.
+echo "Bind tb"
+ghdl --bind tb
 
-  echo "Bind tb"
-  ghdl --bind tb
+echo "Build tb (with main.c) [GCC]"
+gcc main.c -Wl,`ghdl --list-link tb` -o tb_lc
 
-  echo "Build tb (with main.c) [GCC]"
-  gcc main.c -Wl,`ghdl --list-link tb` -o tb_lc
+echo "Execute tb_lc"
+./tb_lc
 
-  echo "Execute tb_lc"
-  ./tb_lc
+# OR
 
-  # OR
+echo "Build main.c"
+gcc -c main.c
 
-  echo "Build main.c"
-  gcc -c main.c
+echo "Bind tb"
+ghdl --bind tb
 
-  echo "Bind tb"
-  ghdl --bind tb
+echo "Build tb (with main.o) [GCC]"
+gcc main.o -Wl,`ghdl --list-link tb` -o tb_lo
 
-  echo "Build tb (with main.o) [GCC]"
-  gcc main.o -Wl,`ghdl --list-link tb` -o tb_lo
-
-  echo "Execute tb_lo"
-  ./tb_lo
-
-fi
+echo "Execute tb_lo"
+./tb_lo
