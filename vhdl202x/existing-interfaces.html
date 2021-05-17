@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>2 Existing interfaces | [LCS-202x] VHDL DPI/FFI based on GHDL’s implementation of VHPIDIRECT</title>
+  <meta name="description" content="VHDL 202x LCS DPI" />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="2 Existing interfaces | [LCS-202x] VHDL DPI/FFI based on GHDL’s implementation of VHPIDIRECT" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="VHDL 202x LCS DPI" />
+  <meta name="github-repo" content="umarcor/ghdl-cosim" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="2 Existing interfaces | [LCS-202x] VHDL DPI/FFI based on GHDL’s implementation of VHPIDIRECT" />
+  
+  <meta name="twitter:description" content="VHDL 202x LCS DPI" />
+  
+
+<meta name="author" content="Unai Martinez-Corral" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="intro.html"/>
+<link rel="next" href="proposal-vffi.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="Rmd/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li style="text-align: center;"><a href="./index.html"><b>VHDL DPI/FFI based on GHDL</b></a></li>
+<li style="text-align: center;"><a title="umarcor/ghdl-cosim" href="https://github.com/umarcor/ghdl-cosim"><img src="https://img.shields.io/badge/umarcor-ghdl--cosim-gray.svg?longCache=true&style=flat-square&logo=github&labelColor=63cda9"></a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>An autogenerated document</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#contact"><i class="fa fa-check"></i>Contact</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="existing-interfaces.html"><a href="existing-interfaces.html"><i class="fa fa-check"></i><b>2</b> Existing interfaces</a><ul>
+<li class="chapter" data-level="2.1" data-path="existing-interfaces.html"><a href="existing-interfaces.html#vhpi"><i class="fa fa-check"></i><b>2.1</b> VHPI</a></li>
+<li class="chapter" data-level="2.2" data-path="existing-interfaces.html"><a href="existing-interfaces.html#fli"><i class="fa fa-check"></i><b>2.2</b> FLI</a></li>
+<li class="chapter" data-level="2.3" data-path="existing-interfaces.html"><a href="existing-interfaces.html#xsi"><i class="fa fa-check"></i><b>2.3</b> XSI</a></li>
+<li class="chapter" data-level="2.4" data-path="existing-interfaces.html"><a href="existing-interfaces.html#vpi"><i class="fa fa-check"></i><b>2.4</b> VPI</a></li>
+<li class="chapter" data-level="2.5" data-path="existing-interfaces.html"><a href="existing-interfaces.html#dpi"><i class="fa fa-check"></i><b>2.5</b> DPI</a></li>
+<li class="chapter" data-level="2.6" data-path="existing-interfaces.html"><a href="existing-interfaces.html#ghdls-vhpidirect"><i class="fa fa-check"></i><b>2.6</b> GHDL’s VHPIDIRECT</a><ul>
+<li class="chapter" data-level="2.6.1" data-path="existing-interfaces.html"><a href="existing-interfaces.html#development"><i class="fa fa-check"></i><b>2.6.1</b> Development</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="existing-interfaces.html"><a href="existing-interfaces.html#cxxrtl"><i class="fa fa-check"></i><b>2.7</b> CXXRTL</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="proposal-vffi.html"><a href="proposal-vffi.html"><i class="fa fa-check"></i><b>3</b> Proposal: VFFI</a><ul>
+<li class="chapter" data-level="3.1" data-path="proposal-vffi.html"><a href="proposal-vffi.html#registration-of-foreign-subprograms"><i class="fa fa-check"></i><b>3.1</b> Registration of foreign subprograms</a></li>
+<li class="chapter" data-level="3.2" data-path="proposal-vffi.html"><a href="proposal-vffi.html#calling-convention"><i class="fa fa-check"></i><b>3.2</b> Calling convention</a></li>
+<li class="chapter" data-level="3.3" data-path="proposal-vffi.html"><a href="proposal-vffi.html#deferreddef"><i class="fa fa-check"></i><b>3.3</b> Deferred definition of external subprograms</a></li>
+<li class="chapter" data-level="3.4" data-path="proposal-vffi.html"><a href="proposal-vffi.html#function-overloading"><i class="fa fa-check"></i><b>3.4</b> Function overloading</a></li>
+<li class="chapter" data-level="3.5" data-path="proposal-vffi.html"><a href="proposal-vffi.html#interface-modes-in-out-inout"><i class="fa fa-check"></i><b>3.5</b> Interface modes: in, out, inout</a></li>
+<li class="chapter" data-level="3.6" data-path="proposal-vffi.html"><a href="proposal-vffi.html#types"><i class="fa fa-check"></i><b>3.6</b> Types</a><ul>
+<li class="chapter" data-level="3.6.1" data-path="proposal-vffi.html"><a href="proposal-vffi.html#enumeration"><i class="fa fa-check"></i><b>3.6.1</b> Enumeration</a></li>
+<li class="chapter" data-level="3.6.2" data-path="proposal-vffi.html"><a href="proposal-vffi.html#integer"><i class="fa fa-check"></i><b>3.6.2</b> Integer</a></li>
+<li class="chapter" data-level="3.6.3" data-path="proposal-vffi.html"><a href="proposal-vffi.html#character"><i class="fa fa-check"></i><b>3.6.3</b> Character</a></li>
+<li class="chapter" data-level="3.6.4" data-path="proposal-vffi.html"><a href="proposal-vffi.html#real"><i class="fa fa-check"></i><b>3.6.4</b> Real</a></li>
+<li class="chapter" data-level="3.6.5" data-path="proposal-vffi.html"><a href="proposal-vffi.html#physycal"><i class="fa fa-check"></i><b>3.6.5</b> Physycal</a></li>
+<li class="chapter" data-level="3.6.6" data-path="proposal-vffi.html"><a href="proposal-vffi.html#time"><i class="fa fa-check"></i><b>3.6.6</b> Time</a></li>
+<li class="chapter" data-level="3.6.7" data-path="proposal-vffi.html"><a href="proposal-vffi.html#composite"><i class="fa fa-check"></i><b>3.6.7</b> Composite</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="proposal-vffi.html"><a href="proposal-vffi.html#a-summary"><i class="fa fa-check"></i><b>3.7</b> A summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="use-cases.html"><a href="use-cases.html"><i class="fa fa-check"></i><b>4</b> Use cases</a><ul>
+<li class="chapter" data-level="4.1" data-path="use-cases.html"><a href="use-cases.html#executing-arbitrary-python-callbacks-from-vhdl"><i class="fa fa-check"></i><b>4.1</b> Executing arbitrary Python callbacks from VHDL</a></li>
+<li class="chapter" data-level="4.2" data-path="use-cases.html"><a href="use-cases.html#raw-simulation-of-hardware-software-interactions-on-socs"><i class="fa fa-check"></i><b>4.2</b> Raw simulation of hardware-software interactions on SoCs</a></li>
+<li class="chapter" data-level="4.3" data-path="use-cases.html"><a href="use-cases.html#coarse-grained-mixed-language-simulation"><i class="fa fa-check"></i><b>4.3</b> Coarse grained mixed-language simulation</a></li>
+<li class="chapter" data-level="4.4" data-path="use-cases.html"><a href="use-cases.html#coarse-grained-mixed-signal-simulation"><i class="fa fa-check"></i><b>4.4</b> Coarse grained mixed-signal simulation</a></li>
+<li class="chapter" data-level="4.5" data-path="use-cases.html"><a href="use-cases.html#using-pipes-or-rpc-libs-to-implement-virtual-peripherals"><i class="fa fa-check"></i><b>4.5</b> Using pipes or RPC libs to implement <em>virtual</em> peripherals</a></li>
+<li class="chapter" data-level="4.6" data-path="use-cases.html"><a href="use-cases.html#implementing-algebra-algorithms-in-vhdl"><i class="fa fa-check"></i><b>4.6</b> Implementing algebra algorithms in VHDL</a></li>
+<li class="chapter" data-level="4.7" data-path="use-cases.html"><a href="use-cases.html#replacing-functions-in-unmodified-binaries-with-behaviourally-equivalent-vhdl-simulationsdesignsmodels"><i class="fa fa-check"></i><b>4.7</b> Replacing functions in unmodified binaries, with behaviourally equivalent VHDL simulations/designs/models</a></li>
+<li class="chapter" data-level="4.8" data-path="use-cases.html"><a href="use-cases.html#providing-customizable-gui-interfaces-to-interact-with-simulations-at-runtime"><i class="fa fa-check"></i><b>4.8</b> Providing custom(izable) GUI interfaces to interact with simulations at runtime</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="requirements.html"><a href="requirements.html"><i class="fa fa-check"></i><b>5</b> Requirements</a></li>
+<li class="chapter" data-level="6" data-path="existing-c-headers.html"><a href="existing-c-headers.html"><i class="fa fa-check"></i><b>6</b> Existing C headers</a></li>
+<li class="chapter" data-level="" data-path="glossary.html"><a href="glossary.html"><i class="fa fa-check"></i>Glossary and acronyms</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li style="text-align: center;"><a title="Discuss at GitHub Issues" href="https://github.com/umarcor/ghdl-cosim/issues"><img src="https://img.shields.io/github/issues-raw/umarcor/ghdl-cosim?longCache=true&style=flat-square&logo=github&label=Discuss%20at%20GitHub"></a></li>
+<li style="text-align: center;"><a title="Join the chat at https://gitter.im/vhdl/General" href="https://gitter.im/vhdl/General"><img src="https://img.shields.io/badge/Join%20chat-at%20gitter-4db797.svg?longCache=true&style=flat-square&logo=gitter&logoColor=e8ecef"></a></li>
+<li style="text-align: center; font-size: 12px;"><a href="https://github.com/rstudio/bookdown" target="blank"><i>Published with bookdown</i></a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">[LCS-202x] VHDL DPI/FFI based on GHDL’s implementation of VHPIDIRECT</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="existing-interfaces" class="section level1">
+<h1><span class="header-section-number">2</span> Existing interfaces</h1>
+<p>As mentioned in the introduction, in the last three decades multiple foreign/co-simulation interfaces for HDL have been proposed. In this section, the most relevant characteristics of each of them are explained. Note that many definitions and references can be found in the <a href="glossary.html#glossary">glossary</a> at the end of this document. Hence, in this section, redundant references are avoided.</p>
+<div id="vhpi" class="section level2">
+<h2><span class="header-section-number">2.1</span> VHPI</h2>
+<p>VHDL Procedural Interface (VHPI) was incorporated in VHDL 2008. It is the only co-simulation interface defined for VHDL. It’s described as “<em>application-programming interface to VHDL tools that allows programmatic access to a VHDL model during its analysis, elaboration, and execution</em>”. Therefore, it is meant for implementing non-trivial so-called “<em>VHPI applications</em>”. The programming model is based on a reference C header file with several layers of nested structs and callbacks of specific types for hooking each of the analysis, elaboration and execution stages.</p>
+<p>Unfortunately, after more than a decade, the sparse or nonexistent support for the VHPI has been a problem. Compared to other interfaces, VHPI is so complicated and does not meet the needs of the average user. Therefore, it retarded interest by users, and that lack of interest has not pushed tool developers to go further. Anecdotically, GHDL supports VPI, but not VHPI, even though it’s a VHDL only simulator.</p>
+<p>It is to be noted that Verilog went down a similar path. Verilog has had the PLI since day one; it was fairly straightforward and easy to use. Then, VPI came and complicated things. In fact, VPI and VHPI are conceptually quite similar. Finally, Verilog pushed back and the DPI was created. Therefore, when designing a VFFI for VHDL, it’d be sensible to have Verilog’s journey in mind.</p>
+<p>Unlike Verilog users, who were accustomed to using a foreign interface and expected it to be available, VHDL have not had any foreign language interface traditionally. However, VHDL is known to be a more robust language, due to its strong typing system. Hence, there are VHDL specific cases that cannot be solved in the Verilog space. That’s the critial mass for a VHDL FFI.</p>
+<p>TODO: <a href="https://forums.xilinx.com/t5/Simulation-and-Verification/Is-VHPI-support-planned-for-Vivado/td-p/562533" class="uri">https://forums.xilinx.com/t5/Simulation-and-Verification/Is-VHPI-support-planned-for-Vivado/td-p/562533</a></p>
+</div>
+<div id="fli" class="section level2">
+<h2><span class="header-section-number">2.2</span> FLI</h2>
+<p><em>TBW</em></p>
+</div>
+<div id="xsi" class="section level2">
+<h2><span class="header-section-number">2.3</span> XSI</h2>
+<p><em>TBW</em></p>
+</div>
+<div id="vpi" class="section level2">
+<h2><span class="header-section-number">2.4</span> VPI</h2>
+<p><em>TBW</em></p>
+</div>
+<div id="dpi" class="section level2">
+<h2><span class="header-section-number">2.5</span> DPI</h2>
+<p><em>TBW</em></p>
+</div>
+<div id="ghdls-vhpidirect" class="section level2">
+<h2><span class="header-section-number">2.6</span> GHDL’s VHPIDIRECT</h2>
+<p>NOTE: As explained later, GHDL’s VHPIDIRECT implementation is currently not compliant with the standard.</p>
+<p>GHDL has supported VPI and VHPIDIRECT for a long time. GHDL is known to work on x86, ARM and/or PPC devices. Hence, it is relevant that GHDL’s VHPIDIRECT is available in many more platforms than other interfaces. This is not a limitation imposed by the interfaces, but because of the lack of implementations.
+In April 2020, the documentation of GHDL regarding co-simulation with foreign languages was split to a separate repository: <a href="https://github.com/ghdl/ghdl-cosim">ghdl/ghdl-cosim</a>. The main motivation to do so was to better document and support the particular implementation of VHPIDIRECT in GHDL. Docs were updated and +20 examples were gathered/added (others are being worked on): <a href="https://ghdl.github.io/ghdl-cosim/">ghdl.github.io/ghdl-cosim</a>. Those examples were contributed by Unai Martinez-Corral and user RocketRoss in GitHub. However, it is to be noted that most of them were based on existing code examples by others: Tristan Gingold, Yann Guidon, Rene Doss and Martin Strubel. See <a href="https://github.com/ghdl/ghdl-cosim/issues/1">ghdl/ghdl-cosim#1: Previous work and future ideas</a>.</p>
+<p>Before reworking ghdl-cosim, during 2019 Unai Martinez-Corral contributed <a href="https://github.com/VUnit/cosim">VUnit/cosim</a> (see also <a href="https://vunit.github.io/cosim/index.html">vunit.github.io/cosim</a>). As explained in <a href="https://vunit.github.io/data_types/user_guide.html#external-vhdl-api">VHDL Libraries &gt; Data Types &gt; External VHDL API</a>, the purpose of VUnit/cosim is to expose some of VUnit’s internal data types through GHDL’s VHPIDIRECT (see <a href="https://vunit.github.io/cosim/bridges/vhpidirect.html#bridges-vhpidirect">Bridges &gt; VHPIDIRECT</a>). Since VUnit’s Communication Library and Verification Components Library are based on those internal data types, the ultimate goal is to allow message passing between queues written in different languages (VHDL and Python). The development to extend the approach to the communication library is currently stalled because of details of VHPIDIRECT which are undefined in the standard (thus implementation-dependent) and which are not explicitly documented in GHDL. After multiple conversations with Tristan Gingold (the author of GHDL), Bradley Harden did a detailed analysis of the complexity to have 1-to-1 mapping between VHDL procedures/functions and C/C++ functions, in the context of cross-language queues. See <a href="https://github.com/VUnit/vunit/issues/603">VUnit/vunit#603</a>.</p>
+<p><a href="https://github.com/hackfin/ghdlex">hackfin/ghdlex</a> and netpp, by Martin Strubel, compose a framework on top of GHDL’s VHPIDIRECT to allow exposing variables and other properties through the network. It provides <em>virtual</em> consoles, FIFOs, RAMs, etc. It handles several undocumented types of GHDL. Unfortunately, it is undocumented too.</p>
+<p>GHDL is written in Ada. Ada and VHDL have multiple similarities. The compile and link models of Ada and C have multiple similarities. Overall, objects can be created in VHDL, Ada and/or C, and then linked together. Hence, the essence of how VHPIDIRECT is implemented in GHDL is that the runtime (GRT) exposes raw internal VHDL/Ada data structures/types. Unlike VPI or VHPI, there is no harness. However the following features are possible but undocumented:</p>
+<ul>
+<li>Passing complex data types (fat pointers).</li>
+<li>Executing VHDL functions/procedures from C.</li>
+</ul>
+<p>The details about how VHDL types are mapped to C are explained in <a href="https://ghdl.github.io/ghdl-cosim/vhpidirect/declarations.html">Type declarations</a>. The <em>fat pointers</em> mentioned there, which are used for unconstrained arrays and accesses to unconstrained arrays, are not documented. There is work in progress in <a href="https://github.com/ghdl/ghdl-cosim/issues/3">ghdl/ghdl-cosim#3</a> to provide a header file that helps with manipulating those fat pointers. The main purpose is to support multidimensional arrays with dimensions of type natural. That is, strings, vectors, matrices, cubes… Such header might be used by some of the projects mentioned above (VUnit, ghdlex…). In fact, the purpose of this LCS is to include such header (an improved version of it) in the next revision of the standard. That is, to define the C representation of complex data types.</p>
+<p>Note that in the documentation of ghdl-cosim (<a href="https://ghdl.github.io/ghdl-cosim/index.html">ghdl.github.io/ghdl-cosim</a>) the term VHPIDIRECT is used loosely. Strictly, “<em>Wrapping a simulation (ghdl_main)</em>” and “<em>Linking object files</em>” are features provided by GHDL/GRT, which are NOT defined in the standard. In fact, those are not available with GHDL’s built-in in-memory backend (<code>mcode</code>). Those are only possible with LLVM or GCC. The same applies to section “<em>Dynamic loading</em>”. Loading foreign objects (from stdlib or shared libs) in a simulation is possible through VHPIDIRECT; however, generating a simulation model as a shared library is a feature provided by GHDL/GRT. The motivation to have VHPIDIRECT and GRT features mixed together is, precisely, this LCS.</p>
+<p>Note also that option <code>-shared</code> was added to GHDL recently. Hence, there are still some issues when running simulations as shared libraries. See <a href="https://github.com/ghdl/ghdl-cosim/pull/15">ghdl/ghdl-cosim#15</a>.</p>
+<p>See <a href="https://ghdl.github.io/ghdl-cosim/vhpidirect/examples/index.html">Examples</a> for an step-by-step introduction to these co-simulation features. The first example is as simple as calling <code>rand</code> from stdlib in VHDL. The most complex one is to have an RGB image buffer drawn in an X11 window at runtime (during simulation). I think this <a href="https://ghdl.github.io/ghdl-cosim/vhpidirect/examples/arrays.html#virtual-vga-screen">Virtual VGA screen</a> is very illustrative, because the UUT is unmodified. A VHDL (testbench) module is used to monitor HSYNC, VSYNC and RGB <em>signals</em> and place them in a 2D array of integers (the framebuffer). Then, the framebuffer is shared with C by reference (avoiding memory duplication). Actually, two different C implementations are shown: one saves snapshots in PNG images and builds an animated GIF, the other one uses the X11 window.</p>
+<div id="development" class="section level3">
+<h3><span class="header-section-number">2.6.1</span> Development</h3>
+<p>Although undefined (or implementation dependent) in the standard, GHDL exposes arguments of <a href="https://ghdl.github.io/ghdl-cosim/vhpidirect/declarations.html#restrictions-on-type-declarations">any</a> VHDL type through VHPIDIRECT. It is possible to inspect the structure of the fat pointers by using <code>gdb</code>:</p>
+<ul>
+<li>Comment all the foreign attribute lines in the source.</li>
+<li>Build the binary with GCC backend.</li>
+<li>Execute the binary in <code>gdb</code>:
+<ul>
+<li><code>info functions &lt;name&gt;</code> to find the long name that the target function takes.</li>
+<li><code>p &lt;long_name&gt;</code> to print the prototype of the function.</li>
+<li><code>b &lt;long_name&gt;</code> to set a breakpoint.</li>
+<li><code>r</code> to run until the breakpoint.</li>
+<li><code>bt full</code> to see the arguments.</li>
+</ul></li>
+</ul>
+<p>For example:</p>
+<pre><code>(gdb) bt full
+#0  work__tb_c__ARCH__tb__print_string (PARAMS=0x557d3a627ef8, INSTANCE=0x557d3a627ee0) at tb_c.vhd:5
+        FRAMEPTR = 0x557d3a627f20
+        STATE = 21885
+        T0_0 = {dim_1 = {left = 761498336, right = 32765, dir = (unknown: 24), length = 0}}
+        T0_1 = 0x557d3a624710
+        T0_2 = {BASE = 0x557d3a6246f0, BOUNDS = 0x557d3a4b82d8 &lt;__gnat_malloc+24&gt;}
+        T0_3 = 0x557d3a4aef92 &lt;&lt;__ghdl_stack2_mark&gt;+116&gt;
+        T0_4 = 32765
+        T0_5 = 0x7ffd2d638ae0
+        T0_6 = 0x557d3a624710
+        _UI00000003 = {filename = 0x557d3a5486f0 &lt;_UI00000000&gt;, line = 8, col = 5}</code></pre>
+<!--
+- Calling foreign subprograms from VHDL
+- Calling VHDL subprograms from a foreign language
+- Dynamic loading
+- Runtime management (CLI args, exit code, top-level generics, etc.)
+-->
+</div>
+</div>
+<div id="cxxrtl" class="section level2">
+<h2><span class="header-section-number">2.7</span> CXXRTL</h2>
+<ul>
+<li><a href="https://github.com/YosysHQ/yosys/tree/master/backends/cxxrtl" class="uri">https://github.com/YosysHQ/yosys/tree/master/backends/cxxrtl</a></li>
+<li><a href="https://tomverbeure.github.io/2020/08/08/CXXRTL-the-New-Yosys-Simulation-Backend.html" class="uri">https://tomverbeure.github.io/2020/08/08/CXXRTL-the-New-Yosys-Simulation-Backend.html</a></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="proposal-vffi.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["twitter", "linkedin", "facebook"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/umarcor/ghdl-cosim/edit/main/vhdl202x-lcs-dpi/02-interfaces.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": "https://github.com/umarcor/ghdl-cosim/commits/main/vhdl202x-lcs-dpi/02-interfaces.Rmd",
+"text": null
+},
+"view": {
+"link": "https://github.com/umarcor/ghdl-cosim/blob/main/vhdl202x-lcs-dpi/02-interfaces.Rmd",
+"text": null
+},
+"download": [["vhdl202x-lcs-dpi.pdf", "PDF"], ["vhdl202x-lcs-dpi.epub", "EPUB"]],
+"toc": {
+"collapse": "none"
+},
+"info": false
+});
+});
+</script>
+
+</body>
+
+</html>
